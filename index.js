@@ -4,7 +4,7 @@ import jwt from 'express-jwt'
 import graphqlExpress  from 'express-graphql';
 import bodyParser from 'body-parser';
 import { JWT_SECRET, MONGO_URI, PORT } from './api/config';
-import Promise from 'bluebird';
+import Promise, { reject } from 'bluebird';
 import models from './api/models';
 import schema from './api/schema/schema';
 import {authService,findById} from './api/services/authService';
@@ -12,6 +12,8 @@ import {authService,findById} from './api/services/authService';
 mongoose.Promise = global.Promise;
 
 mongoose.connect(MONGO_URI);
+
+const User = mongoose.model('user');
 
 mongoose.connection
     .once('open', () => console.log('Connected to MongoLab instance.'))
@@ -28,14 +30,13 @@ app.use('/graphql', jwt({
     schema,
     graphiql : true,
     context : {
-        user : request.user ? findById(request.user.id) :
-        Promise.resolve(null),
         request : request,
+        user : request.user ?User.findOne({ id: request.user.id }) :
+        Promise.resolve(null),
         test : 'Example context value'
     }
 })
 )
-
 );
 
 /*

@@ -1,5 +1,7 @@
+import TimestampType from '../helpers/TimestampType';
+
 const graphql =  require('graphql')
-const { GraphQLObjectType,GraphQLString,GraphQLID } = graphql;
+const { GraphQLObjectType,GraphQLString,GraphQLID,GraphQLDate } = graphql;
 
 
 const UserType = new GraphQLObjectType({
@@ -14,6 +16,9 @@ const UserType = new GraphQLObjectType({
         id : {
             type : GraphQLID
         },
+        created_at : {
+            type : TimestampType
+        }
     }
 });
 

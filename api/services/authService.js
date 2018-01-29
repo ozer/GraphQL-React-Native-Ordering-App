@@ -1,23 +1,24 @@
 const mongoose = require('mongoose');
 const User = mongoose.model('user');
 
-export const findById = (id, callback) => {
+export const findById = (id, callback) =>{
 
-    console.log("findById 1");
+    console.log("Id from authService : "+id);
 
-    User.findById({
-        _id : '5a6f275c761f1d24e56b5da8'
-    }).then((user) => {
+    console.log("sadas : "+User.findById({ _id: id }))
 
-        console.log("findById 2: "+JSON.stringify(user));
+    User.findById({ _id: id }).then((user)=>{
 
-        if (user) {
-            console.log("TRUE : "+JSON.stringify(user));
-            return true;
-        }
+        console.log("asdasd");
 
-        return null;
+        return user;
 
     })
+
+}
+
+export const getAuthenticatedUser = (context) => {
+
+    return context.request.user ? context.request.user : null
 
 }

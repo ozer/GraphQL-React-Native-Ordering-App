@@ -2,10 +2,15 @@ const graphql = require('graphql');
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config';
-const { GraphQLObjectType, GraphQLString, GraphQLID } = graphql;
+import TimestampType from './helpers/TimestampType';
+const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt } = graphql;
 const mongoose = require('mongoose');
 const User = mongoose.model('user');
+const Category = mongoose.model('category');
+const Product = mongoose.model('product');
 const UserType = require('./types/user_type');
+const CategoryType = require('./types/category_type');
+const ProductType = require('./types/product_type');
 const authService = require('../services/authService');
 const mutation = new GraphQLObjectType({
     name: 'mutation',
@@ -15,32 +20,28 @@ const mutation = new GraphQLObjectType({
             args: {
                 name: { type: GraphQLString },
                 email: { type: GraphQLString },
-                password: { type: GraphQLString }
+                password: { type: GraphQLString },
             },
             resolve(parentValue, { name, email, password }, context) {
-                console.log("1");
-                console.log(Object.keys(context.request));
-                console.log(context.request.headers);
-                console.log("1")
+
                 return User.findOne({ email: email }).then((existing) => {
                     if (!existing) {
-                        console.log("2");
+                        console.log("Not Existing");
                         return bcrypt.hash(password, 10).then(hash => User.create({
                             name,
                             email,
                             password: password,
                         })).then((user) => {
-                            console.log("4");
-                            const { id } = user;
-
+                            console.log("user got it");
+                            const { id, email } = user;
+                            console.log(user);
                             const token = jwt.sign({
-                                id: user.id,
-                                email: user.email
-                            }, JWT_SECRET, { expiresIn: 60 * 60 });
+                                id: id,
+                                email: email
+                            }, JWT_SECRET, { expiresIn: 60 * 60 *24 });
 
-                            context.request.user = Promise.resolve(token);
-                            console.log(Object.keys(context.request));
-                            console.log("User : " + JSON.stringify(context.request.user));
+                            context.user = Promise.resolve(token);
+                            console.log("Token : " + token);
                             return user;
                         })
                     }
@@ -57,7 +58,7 @@ const mutation = new GraphQLObjectType({
             },
             resolve(parentValue, { email, password }, context) {
                 console.log("email : " + email);
-                console.log(context.request.user);
+                console.log(context.user);
                 return User.findOne({ email: email }).then((user) => {
                     if (user) {
                         // validate password
@@ -69,13 +70,10 @@ const mutation = new GraphQLObjectType({
                             const token = jwt.sign({
                                 id: user.id,
                                 email: user.email
-                            }, JWT_SECRET, { expiresIn: 60 * 60 });
+                            }, JWT_SECRET, { expiresIn: 60 * 60 * 24 });
 
-                            context.request.user = Promise.resolve(token);
-
-                            console.log(token);
-
-                            console.log(context.request.user);
+                            context.user = Promise.resolve(token);
+                            console.log("token : " + token);
 
                             return user;
 
@@ -114,8 +112,62 @@ const mutation = new GraphQLObjectType({
                 console.log("asdsads" + Object.keys(context.request))
                 return 'selam';
             }
+        },
+        newCategory: {
+            type: CategoryType,
+            args: {
+                name: { type: GraphQLString }
+            },
+            resolve(parentValue, { name }, context) {
+
+                return Category.findOne({ name }).then((existing) => {
+
+                    if (!existing) {
+                        return Promise.resolve((new Category({ name })).save())
+                    }
+                    return Promise.reject('Category already exists !');
+
+                })
+
+            }
+        },
+        newProduct: {
+            type: CategoryType,
+            args: {
+                name: { type: GraphQLString },
+                categoryId: { type: GraphQLID },
+                price : { type : GraphQLInt },
+                quantity : { type : GraphQLInt }
+            },
+            resolve(parentValue, { name, price, quantity, categoryId }, context) {
+
+
+                return Category.addProduct(name,price,quantity, categoryId);
+                /*
+                return Product.findOne({ name }).then((existing) => {
+                    console.log("jasdnasds")
+
+                    // example category code : 5a6f8db8d70cdf32136dd53d (Coffee)
+                    if (!existing) {
+                        return Promise.resolve(
+                            Category.addProduct(categoryId,name,price,quantity)
+                        )
+                    }
+                    return Promise.reject('Product already exists !');
+                })
+                */
+            }
         }
     }
+
 })
+
+/*
+
+{
+	"query" : " query {users{id name email created_at}}"
+}
+
+*/
 
 export default mutation;

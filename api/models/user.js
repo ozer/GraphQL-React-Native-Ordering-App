@@ -6,8 +6,11 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     name: String,
     email: String,
-    password: String
-},{collection : 'User'});
+    password: String,
+    created_at : { type : Date, default : new Date()}
+},{collection : 'User',});
+
+//UserSchema.index({ expires : 10 })
 
 /*
 UserSchema.pre('save', function save(next) {
