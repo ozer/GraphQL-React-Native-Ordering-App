@@ -14,8 +14,8 @@ const mutation = new GraphQLObjectType({
             type: UserType,
             args: {
                 name: { type: GraphQLString },
-                email: {  type: GraphQLString },
-                password: {  type: GraphQLString }
+                email: { type: GraphQLString },
+                password: { type: GraphQLString }
             },
             resolve(parentValue, { name, email, password }, context) {
                 console.log("1");
@@ -32,11 +32,13 @@ const mutation = new GraphQLObjectType({
                         })).then((user) => {
                             console.log("4");
                             const { id } = user;
-                            const token = jwt.sign({ id: id, email: email }, JWT_SECRET, { expiresIn: 60 * 60 });
-                            console.log("Token : " + token);
-                            user.jwt = token;
-                            console.log("user : " + JSON.stringify(user));
-                            context.request.user = token;
+
+                            const token = jwt.sign({
+                                id: user.id,
+                                email: user.email
+                            }, JWT_SECRET, { expiresIn: 60 * 60 });
+
+                            context.request.user = Promise.resolve(token);
                             console.log(Object.keys(context.request));
                             console.log("User : " + JSON.stringify(context.request.user));
                             return user;
@@ -50,24 +52,24 @@ const mutation = new GraphQLObjectType({
         signIn: {
             type: UserType,
             args: {
-                email: {  type: GraphQLString },
-                password: {  type: GraphQLString }
+                email: { type: GraphQLString },
+                password: { type: GraphQLString }
             },
             resolve(parentValue, { email, password }, context) {
-                    console.log("email : "+email);
-                    console.log(context.request.user);
-                return User.findOne({ email : email }).then((user) => {
+                console.log("email : " + email);
+                console.log(context.request.user);
+                return User.findOne({ email: email }).then((user) => {
                     if (user) {
                         // validate password
-                        console.log("User : "+JSON.stringify(user));
-                        console.log("password : "+password);
+                        console.log("User : " + JSON.stringify(user));
+                        console.log("password : " + password);
 
-                        if( password == user.password ){
+                        if (password == user.password) {
 
                             const token = jwt.sign({
-                                id : user.id,
-                                email : user.email
-                            }, JWT_SECRET,{expiresIn : 60*60});
+                                id: user.id,
+                                email: user.email
+                            }, JWT_SECRET, { expiresIn: 60 * 60 });
 
                             context.request.user = Promise.resolve(token);
 
