@@ -6,6 +6,8 @@ const {
 } = graphql;
 
 function serializeDate(value) {
+
+    console.log("serializeDate");
     if (value instanceof Date) {
       return value.getTime();
     } else if (typeof value === 'number') {
@@ -17,6 +19,8 @@ function serializeDate(value) {
   }
   
   function parseDate(value) {
+
+    console.log("parseDate");
     if (value === null) {
       return null;
     }
@@ -29,6 +33,8 @@ function serializeDate(value) {
   }
   
   function parseDateFromLiteral(ast) {
+
+    console.log("parseDateFromLiteral")
     if (ast.kind === Kind.INT) {
       const num = parseInt(ast.value, 10);
       return new Date(num);

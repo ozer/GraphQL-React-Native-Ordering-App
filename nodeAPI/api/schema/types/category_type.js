@@ -12,6 +12,9 @@ const CategoryType = new GraphQLObjectType({
         name : {
             type : GraphQLString,
         },
+        created_at : {
+            type : TimestampType
+        },
         id: { type: GraphQLID },
         products : {
             type : new GraphQLList(ProductType),

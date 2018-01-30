@@ -16,9 +16,6 @@ const UserType = new GraphQLObjectType({
         id : {
             type : GraphQLID
         },
-        created_at : {
-            type : TimestampType
-        }
     }
 });
 

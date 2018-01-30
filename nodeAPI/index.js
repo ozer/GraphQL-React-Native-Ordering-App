@@ -7,7 +7,6 @@ import { JWT_SECRET, MONGO_URI, PORT } from './api/config';
 import Promise, { reject } from 'bluebird';
 import models from './api/models';
 import schema from './api/schema/schema';
-import {authService,findById} from './api/services/authService';
 
 mongoose.Promise = global.Promise;
 
@@ -20,6 +19,7 @@ mongoose.connection
     .on('error', error => console.log('Error connecting to MongoLab:', error));
 
 
+    
 const app = express();
 app.use(bodyParser.json())
 

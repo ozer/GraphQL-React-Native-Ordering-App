@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config';
 import TimestampType from './helpers/TimestampType';
+import { Promise } from 'mongoose';
 const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLInt } = graphql;
 const mongoose = require('mongoose');
 const User = mongoose.model('user');
@@ -38,7 +39,7 @@ const mutation = new GraphQLObjectType({
                             const token = jwt.sign({
                                 id: id,
                                 email: email
-                            }, JWT_SECRET, { expiresIn: 60 * 60 *24 });
+                            }, JWT_SECRET, { expiresIn: 60 * 60 * 24 });
 
                             context.user = Promise.resolve(token);
                             console.log("Token : " + token);
@@ -122,8 +123,16 @@ const mutation = new GraphQLObjectType({
 
                 return Category.findOne({ name }).then((existing) => {
 
+                    console.log("Context : " + context.request);
+                    console.log(Object.keys(context));
+                    console.log(Object.keys(context.request));
+                    console.log(context.request.user)
+
                     if (!existing) {
-                        return Promise.resolve((new Category({ name })).save())
+
+                        console.log("Category does not exist !");
+
+                        return new Category({ name }).save();
                     }
                     return Promise.reject('Category already exists !');
 
@@ -135,27 +144,26 @@ const mutation = new GraphQLObjectType({
             type: CategoryType,
             args: {
                 name: { type: GraphQLString },
+                price: { type: GraphQLInt },
+                quantity: { type: GraphQLInt },
                 categoryId: { type: GraphQLID },
-                price : { type : GraphQLInt },
-                quantity : { type : GraphQLInt }
             },
             resolve(parentValue, { name, price, quantity, categoryId }, context) {
 
-
-                return Category.addProduct(name,price,quantity, categoryId);
-                /*
                 return Product.findOne({ name }).then((existing) => {
-                    console.log("jasdnasds")
 
-                    // example category code : 5a6f8db8d70cdf32136dd53d (Coffee)
                     if (!existing) {
-                        return Promise.resolve(
-                            Category.addProduct(categoryId,name,price,quantity)
-                        )
+
+                        console.log("Product does not exist !");
+
+                        return Category.addProduct(name, price, quantity, categoryId);
+
                     }
+
                     return Promise.reject('Product already exists !');
+
                 })
-                */
+
             }
         }
     }
