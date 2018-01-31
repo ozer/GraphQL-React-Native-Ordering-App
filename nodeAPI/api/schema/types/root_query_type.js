@@ -16,23 +16,35 @@ const RootQuery = new GraphQLObjectType({
     fields: () => ({
         user: {
             type: UserType,
-            resolve(parentValue, args, context) {
-                console.log(Object.keys(context.request))
-                return context.request.user;
+            args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+            resolve(parentValue, {id}, context) {
+                console.log("hasgdhjabdnasjkdaksj");
+                console.log("id : "+id);
+                //return User.findById(id).then(user=>user);
             }
         },
         users: {
             type: new GraphQLList(UserType),
             resolve(parentValue, args, context) {
-                //console.log(context.user.schema)
-                console.log("User : " + JSON.stringify(getAuthenticatedUser(context)))
+                
+                //console.log("User : " + JSON.stringify(getAuthenticatedUser(context)))
                 return User.find({});
             }
         },
         categories: {
             type: new GraphQLList(CategoryType),
             resolve(parentValue,{},context) {
+                console.log("categories being fetched !");
+                console.log("context user");
+                console.log(context.user)
+                console.log("context request user");
+                console.log(context.request.user);
 
+                context.user.then((data)=>{
+                    console.log("Data : "+JSON.stringify(data));
+                }).catch((err)=>{
+                    console.log("Err occured due to the : "+err)
+                })
                 return Category.find({});
                 /*
                 if( context.request.user ){

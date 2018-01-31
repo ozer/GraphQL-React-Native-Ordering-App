@@ -24,7 +24,6 @@ const mutation = new GraphQLObjectType({
                 password: { type: GraphQLString },
             },
             resolve(parentValue, { name, email, password }, context) {
-
                 return User.findOne({ email: email }).then((existing) => {
                     if (!existing) {
                         console.log("Not Existing");
@@ -40,9 +39,10 @@ const mutation = new GraphQLObjectType({
                                 id: id,
                                 email: email
                             }, JWT_SECRET, { expiresIn: 60 * 60 * 24 });
-
-                            context.user = Promise.resolve(token);
-                            console.log("Token : " + token);
+                            user.jwt = token;
+                            context.user = user;
+                            console.log("token : " + token);
+                            console.log("user : "+user);
                             return user;
                         })
                     }
@@ -57,7 +57,7 @@ const mutation = new GraphQLObjectType({
                 email: { type: GraphQLString },
                 password: { type: GraphQLString }
             },
-            resolve(parentValue, { email, password }, context) {
+            resolve(_, { email, password }, context) {
                 console.log("email : " + email);
                 console.log(context.user);
                 return User.findOne({ email: email }).then((user) => {
@@ -68,14 +68,15 @@ const mutation = new GraphQLObjectType({
 
                         if (password == user.password) {
 
+                            // Lets generate a token for the authenticated user !
                             const token = jwt.sign({
                                 id: user.id,
                                 email: user.email
                             }, JWT_SECRET, { expiresIn: 60 * 60 * 24 });
 
-                            context.user = Promise.resolve(token);
-                            console.log("token : " + token);
-
+                            user.jwt = token;
+                            context.request.user = user;
+                            console.log("user : "+user);
                             return user;
 
                         } else {
@@ -84,34 +85,22 @@ const mutation = new GraphQLObjectType({
 
                         }
 
-                        /*
-                        return bcrypt.compare(password, user.password).then((res) => {
-                            if (res) {
-                                // create jwt
-                                const token = jwt.sign({
-                                    id: user.id,
-                                    email: user.email,
-                                }, JWT_SECRET);
-                                user.jwt = token;
-                                context.request.user = Promise.resolve(user);
-                                return user;
-                            }
-
-                            return Promise.reject('password incorrect');
-                        });
-                        */
                     }
                     console.log("User not found !");
                     return Promise.reject('email not found');
                 });
             }
         },
-        test: {
-            type: UserType,
-            resolve(parentValue, { }, context) {
-                console.log("selam")
-                console.log("asdsads" + Object.keys(context.request))
-                return 'selam';
+        isTokenAuth : {
+            type : UserType,
+            resolve(_,{},context){
+                context.user.then((data)=>{
+                    console.log("Data : "+JSON.stringify(data));
+                    return data;
+                }).catch((err)=>{
+                    console.log("Error occured due to the : "+err);
+                    return Promise.reject('Unauthorized')
+                })
             }
         },
         newCategory: {
@@ -169,13 +158,5 @@ const mutation = new GraphQLObjectType({
     }
 
 })
-
-/*
-
-{
-	"query" : " query {users{id name email created_at}}"
-}
-
-*/
 
 export default mutation;

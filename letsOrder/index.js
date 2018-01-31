@@ -1,5 +1,5 @@
 import { AppRegistry } from 'react-native';
-import App from './App';
-import {StackNavigator} from 'react-navigation';
+import letsOrder from './letsOrder'
 
-AppRegistry.registerComponent('letsOrder', () => App);
+
+AppRegistry.registerComponent('letsOrder', () => letsOrder);

@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose, { mongo } from 'mongoose';
 import jwt from 'express-jwt'
-import graphqlExpress  from 'express-graphql';
+import graphqlExpress from 'express-graphql';
 import bodyParser from 'body-parser';
 import { JWT_SECRET, MONGO_URI, PORT } from './api/config';
 import Promise, { reject } from 'bluebird';
@@ -19,25 +19,26 @@ mongoose.connection
     .on('error', error => console.log('Error connecting to MongoLab:', error));
 
 
-    
 const app = express();
 app.use(bodyParser.json())
 
 app.use('/graphql', jwt({
     secret: JWT_SECRET,
     credentialsRequired: false,
-}), graphqlExpress((request, response, graphQLParams) => ({
-    schema,
-    graphiql : true,
-    context : {
-        request : request,
-        user : request.user ?User.findOne({ id: request.user.id }) :
-        Promise.resolve(null),
-        test : 'Example context value'
+}), graphqlExpress((request, response, graphQLParams) => {
+    console.log(request.headers);
+    return {
+        schema,
+        graphiql: true,
+        context: {
+            request: request,
+            user: request.user ? User.findById(request.user.id) :
+                Promise.resolve(null),
+            test: 'Example context value'
+        }
     }
 })
 )
-);
 
 /*
 user : request.user ? user.findOne({ where: { id: request.user.id } }) :
