@@ -72,7 +72,7 @@ const mutation = new GraphQLObjectType({
                             const token = jwt.sign({
                                 id: user.id,
                                 email: user.email
-                            }, JWT_SECRET, { expiresIn: 60 * 60 * 24 });
+                            }, JWT_SECRET, { expiresIn: 60 * 60 * 24 * 7 * 52 });
 
                             user.jwt = token;
                             context.request.user = user;

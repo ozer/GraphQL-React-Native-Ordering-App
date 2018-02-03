@@ -1,45 +1,76 @@
 import React from 'react';
 import {
     ScrollView,
-    Text
+    Text,
+    TextInput,
+    Dimensions,
+    View
 } from 'react-native';
-import { graphql,compose,withApollo } from 'react-apollo';
+import { graphql, compose, withApollo } from 'react-apollo';
 import fetchShop from '../../queries/fetchShop';
 import gql from 'graphql-tag';
+import { StackNavigator,TabNavigator } from 'react-navigation';
+import { ShopCreator } from './ShopCreator';
+import ProductPage from '../Product/ProductPage';
+import TabMenuItems from '../Menus/TabMenuItems';
+const { width, height } = Dimensions.get('window');
 
-class Shop extends React.Component{
+class Shop extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
+
+        this.renderShopTab = this.renderShopTab.bind(this);
+
     }
 
-    render(){
+    renderShopTab() {
+        const { client } = this.props;
+        try {
+            const { categories } = client.readQuery({
+                query: gql`
+                {
+                    categories{
+                        id
+                        name
+                        products{
+                            id
+                            name
+                            price
+                            quantity
+                        }
+                    }
+                }`
+            })
 
-        //console.log(this.props.client.cache.data);
+            console.log("Categories  :" + categories);
 
-        /*
-        const data = this.props.client.readQuery({
-            query : gql`
-            query S{
-                categories {
-                    id
-                    name
-                }
-            }
-            `,
-            
-        })
-        */
+            return (
+                <ShopCreator categories={categories} />
+            )
 
-        return(
-            <ScrollView>
-                <Text>
-                    Shop !
-                </Text>
-            </ScrollView>
+        } catch (error) {
+            console.log("Error occured creating the categories due to the : " + error);
+
+            return (
+                <View>
+                    <Text>
+                        Loading...
+                    </Text>
+                </View>
+            )
+
+        }
+
+    }
+
+    render() {
+
+        return (
+            this.renderShopTab()
         )
     }
 
 }
 
-export default compose(withApollo,graphql(fetchShop))(Shop);
+export default compose(withApollo, graphql(fetchShop))(Shop);

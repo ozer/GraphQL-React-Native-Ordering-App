@@ -19,6 +19,7 @@ import LoginMutation from '../../mutations/Login';
 import PropTypes from 'prop-types';
 import CurrentUser from '../../queries/CurrentUser';
 import { Header } from '../../components/common/Header';
+import fetchShop from '../../queries/fetchShop';
 
 const { width, height } = Dimensions.get('window');
 
@@ -131,10 +132,10 @@ class SignIn extends React.Component {
 
 
                 } else {
+
                     alert("Error occured !");
+                    
                 }
-
-
 
             }).catch(err => {
                 console.log("err occured due to the :" + err);
@@ -228,6 +229,7 @@ const login = graphql(LoginMutation, {
         login: (user) =>
             mutate({
                 variables: { email: user.email, password: user.password },
+                refetchQueries : [ { query : fetchShop}]
             }),
     }),
 });

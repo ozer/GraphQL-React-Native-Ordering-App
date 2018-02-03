@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import PrimaryNavigator from './navigation/navigation';
 import navHelpers from './navigation/navHelpers';
 
-// Apollo Setup 
+// Apollo Setup
 import { ApolloProvider, graphql, withApollo } from 'react-apollo';
 import { ApolloClient } from 'apollo-client';
 import { createHttpLink } from 'apollo-link-http';

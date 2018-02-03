@@ -8,6 +8,8 @@ export default gql`
         products{
             id
             name
+            price
+            quantity
         }
     }
 }`

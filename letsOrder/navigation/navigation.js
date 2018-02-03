@@ -12,6 +12,7 @@ import CustomDrawerMenu from '../src/containers/Menus/CustomDrawerMenu';
 import Shop from '../src/containers/Shop/Shop';
 import { Button } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import ShopCreator from '../src/containers/Shop/ShopCreator';
 const SignInStackNavigator = StackNavigator({
     SignInStackNav: {
         screen: SignIn
@@ -46,12 +47,12 @@ const SignUpStackNavigator = StackNavigator({
         })
     });
 
-const ShopTabNavigator = TabNavigator({
+const ShopTabNavigator = StackNavigator({
     Shop: {
         screen: Shop
     }
 }, {
-        tabBarPosition: 'top'
+        headerMode: 'none'
     })
 
 
@@ -59,10 +60,10 @@ const DrawerBar = DrawerNavigator({
     Shop: {
         screen: ShopTabNavigator
     },
-    Shop2 : {
-        screen : ShopTabNavigator
+    Shop2: {
+        screen: ShopTabNavigator
     }
-    
+
 }, {
         drawerPosition: 'left',
         headerMode: 'none',

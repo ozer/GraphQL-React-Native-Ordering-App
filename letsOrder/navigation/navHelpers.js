@@ -1,3 +1,4 @@
+// THESE HELPERS WERE PLANNED TO USE IN SETTING NAVIGATION REDUCER UP BUT SINCE WE DO NOT HAVE ANY REDUCER IT IS POINTLESS.
 export const hasProp = function (obj, prop) {
     return Object.prototype.hasOwnProperty.call(obj, prop);
 }
@@ -20,4 +21,3 @@ export const getActionRouteName = function (action) {
 
     return action.routeName;
 }
-
