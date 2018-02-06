@@ -6,9 +6,16 @@ import {
     ListView,
     Dimensions,
     StyleSheet,
-    TextInput
+    TextInput,
+    TouchableOpacity
 } from 'react-native';
+import { withApollo, compose } from 'react-apollo';
 import { ProductContainer } from '../../components/products/ProductContainer';
+import gql from 'graphql-tag';
+import graphql from 'react-apollo/graphql';
+import addItemToCart from '../../mutations/addItemToCart';
+import fillCartMutation from '../../mutations/fillCart';
+import testCartMutation from '../../mutations/testCartMutation';
 const { width, height } = Dimensions.get('window');
 const fadeAnim = new Animated.Value(0);
 
@@ -21,7 +28,7 @@ const styles = StyleSheet.create({
     list: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        alignItems: 'flex-start'
+        alignItems: 'flex-start',
     },
     header: {
         flex: 1,
@@ -30,8 +37,8 @@ const styles = StyleSheet.create({
     },
     headerInput: {
         height: 30,
-        width : 200,
-        backgroundColor : 'pink',
+        width: 200,
+        backgroundColor: 'pink',
         flex: 1,
         paddingHorizontal: 8,
         fontSize: 15,
@@ -75,12 +82,67 @@ class ProductPage extends React.Component {
         return (
             <View style={styles.header}>
                 <Text
-                style={{textAlign :'center', marginBottom : 15,}}
+                    style={{ textAlign: 'center', marginBottom: 15, }}
                 >
                     İçkiler !
                 </Text>
             </View>
         )
+
+    }
+
+    addItemToCart(product) {
+
+        const { client, addItem } = this.props;
+
+        /*
+        this.props.navigation.state.params.testCart()
+            .then((test) => {
+                console.log("Test cart mutation : " + test);
+            }).catch((testErr) => {
+                console.log("Error for test carm utation : " + testErr);
+            })
+        */
+
+
+        try {
+            const { user } = client.readQuery({
+                query: gql`
+            {
+                user{
+                    id
+                    email
+                    name
+                    __typename
+                    cart{
+                        id
+                    }
+                }
+            }
+            `
+            })
+
+            console.log("User : "+JSON.stringify(user))
+
+            const { id } = product;
+            let quantity = 1
+
+
+            addItem({ id,quantity })
+                .then((info) => {
+                    console.log("Information : " + JSON.stringify(info))
+                }).catch((err) => {
+                    console.log("Error occured while adding item to the cart : " + err);
+                    const errors = err.graphQLErrors.map(error =>
+                        error.message
+                    )
+                })
+
+        } catch (error) {
+            console.log("Error occured at reading user from the cache due to the following err : " + error);
+        }
+
+
 
     }
 
@@ -95,22 +157,51 @@ class ProductPage extends React.Component {
         });
 
         return (
-            <Animated.View
-                style={{ opacity: fadeAnim, flex: 1 }}
+            <Animated.ScrollView
+                style={{ opacity: fadeAnim, flex: 1, backgroundColor: 'white' }}
             >
 
-                <ListView
-                    contentContainerStyle={styles.list}
-                    style={{ flex: 1, marginTop: height / 20 }}
-                    dataSource={dataSource.cloneWithRows(products)}
-                    renderRow={(rowData) => <ProductContainer product={rowData} />}
-                />
-
-
-            </Animated.View>
+                <View
+                    style={styles.list}
+                >
+                    {
+                        products.map((key, index) => {
+                            return (
+                                <View style={{ width: width / 3 }}
+                                    key={index}>
+                                    <ProductContainer product={key} addItemToCart={this.addItemToCart.bind(this)} />
+                                </View>
+                            )
+                        })
+                    }
+                </View>
+            </Animated.ScrollView>
         )
     }
 
 }
 
-export default ProductPage;
+const addItem = graphql(testCartMutation, {
+    props: ({ mutate }) => ({
+        addItem: (item) =>
+            mutate({
+                variables : {
+                    quantity : item.quantity,
+                    productId : item.id
+                }
+            })
+    })
+})
+
+
+
+export default compose(withApollo,addItem)(ProductPage)
+
+/*
+                <ListView
+                    contentContainerStyle={styles.list}
+                    style={{ flex: 1, marginTop: height / 20 }}
+                    dataSource={dataSource.cloneWithRows(products)}
+                    renderRow={(rowData) => <ProductContainer product={rowData} />}
+        />
+*/

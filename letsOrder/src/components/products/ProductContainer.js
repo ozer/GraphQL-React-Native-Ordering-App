@@ -1,5 +1,5 @@
 import React from 'react';
-import {View,Text,Dimensions, StyleSheet,Image} from 'react-native';
+import {View,Text,Dimensions, StyleSheet,Image, TouchableOpacity} from 'react-native';
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -15,23 +15,33 @@ const styles = StyleSheet.create({
         width : width/3
     },
     priceContainer : {
-        height : (height/10)-(height/12),
-        textAlign : 'center'
+        width : width/3,
+        backgroundColor : 'white'
     }
 })
 
-export const ProductContainer = ({product}) => {
+export const ProductContainer = ({product,addItemToCart}) => {
 
     return(
         <View style={styles.container}>
-            <Image
-                style={styles.imageContainer}
-                loadingIndicatorSource={{uri : 'https://facebook.github.io/react-native/docs/assets/favicon.png'}}
-                source={{uri : 'https://www.seaicons.com/wp-content/uploads/2016/07/nike-icon.png'}}
-            />
-            <Text>
+        <TouchableOpacity
+            onPress={()=>addItemToCart(product)}
+        >
+            <View>
+                <Text>
                     {product.name}
+                </Text>
+            </View>
+            <View
+            style={styles.priceContainer}
+            >
+            <Text
+            style={{textAlign : 'center', color : 'blue'}}
+            >
+                    {product.price}
             </Text>
+            </View>
+            </TouchableOpacity>
         </View>
     )
 

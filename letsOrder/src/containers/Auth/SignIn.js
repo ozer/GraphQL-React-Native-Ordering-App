@@ -1,6 +1,7 @@
 import React from 'react';
 import { graphql, compose, withApollo } from 'react-apollo';
 import { NavigationActions } from 'react-navigation';
+import gql from 'graphql-tag';
 import {
     View,
     Text,
@@ -20,7 +21,7 @@ import PropTypes from 'prop-types';
 import CurrentUser from '../../queries/CurrentUser';
 import { Header } from '../../components/common/Header';
 import fetchShop from '../../queries/fetchShop';
-
+import testCartMutation from '../../mutations/testCartMutation';
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
@@ -86,9 +87,9 @@ class SignIn extends React.Component {
         this.switchView = this.switchView.bind(this);
     }
 
-    async componentWillMount(){
+    async componentWillMount() {
 
-        
+
 
     }
 
@@ -113,7 +114,7 @@ class SignIn extends React.Component {
                 if (user) {
 
                     console.log("User : " + JSON.stringify(user.data.signIn.jwt));
-                    const {  jwt } = user.data.signIn;
+                    const { jwt } = user.data.signIn;
                     // Lets set the token to the AsyncStorage
                     AsyncStorage.setItem('JWT', jwt);
 
@@ -134,7 +135,7 @@ class SignIn extends React.Component {
                 } else {
 
                     alert("Error occured !");
-                    
+
                 }
 
             }).catch(err => {
@@ -229,7 +230,22 @@ const login = graphql(LoginMutation, {
         login: (user) =>
             mutate({
                 variables: { email: user.email, password: user.password },
-                refetchQueries : [ { query : fetchShop}]
+                refetchQueries: [{ query: fetchShop }],
+                update: (proxy, { data: { signIn } }) => {
+
+                    console.log("USSER : " + JSON.stringify(signIn))
+
+                    const query = gql`     {                 
+                            user{
+                                id
+                                email
+                                jwt
+                                __typename
+                            }
+                        }
+                    `;
+                    proxy.writeQuery({ query: query, data: { user: signIn } })
+                }
             }),
     }),
 });

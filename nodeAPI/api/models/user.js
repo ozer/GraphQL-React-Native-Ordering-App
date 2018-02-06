@@ -7,30 +7,64 @@ const UserSchema = new Schema({
     name: String,
     email: String,
     password: String,
-    created_at : { type : Date, default : new Date()}
-},{collection : 'User',});
+    created_at: { type: Date, default: new Date() },
+    cart: {
+        type: Schema.Types.ObjectId,
+        ref: 'cart'
+    },
+}, { collection: 'User', });
 
-//UserSchema.index({ expires : 10 })
+
+UserSchema.statics.findCart = function(id){
+
+    console.log("Finding the cart : "+id);
+
+    return this.findById(id)
+        .populate('cart')
+        .then(user=>user.cart);
+
+}
+
+UserSchema.statics.createCart = function(id){
+
+    console.log("Creating cart : "+id);
+
+    const Cart = mongoose.model('cart');
+
+    return this.findById(id)
+        .then(user=>{
+            const cart = new Cart({updated_at : new Date() });
+            user.cart = cart.id;
+            return Promise.all([
+                cart.save(),user.save()
+            ]).then(([cart,user])=>user);
+        })
+
+}
+
 
 /*
-UserSchema.pre('save', function save(next) {
-    const user = this;
-    if (!user.isModified('password')) { return next(); }
-    bcrypt.genSalt(10, (err, salt) => {
-        if (err) { return next(err); }
-        bcrypt.hash(user.password, salt, null, (err, hash) => {
-            if (err) { return next(err); }
-            user.password = hash;
-            next();
-        });
-    });
-});
 
-UserSchema.methods.comparePassword = function comparePassword(candidatePassword, cb) {
-    bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-        cb(err, isMatch);
-    });
-};
+CategorySchema.statics.addProduct = function(name,price,quantity,id){
+    const Product = mongoose.model('product');
+    return this.findById(id)
+        .then(category => {
+            const product = new Product({category,name,price,quantity});
+            category.products.push(product.id);
+            return Promise.all([
+                product.save(),category.save()
+            ]).then(([product,category])=>category);
+        })
+}
+
+CategorySchema.statics.findProducts = function (id) {
+    return this.findById(id)
+        .populate('products')
+        .then(category => category.products);
+}
+
 */
+
+//UserSchema.index({ expires : 10 })
 
 mongoose.model('user', UserSchema, 'User');

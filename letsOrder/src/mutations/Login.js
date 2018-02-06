@@ -7,6 +7,9 @@ mutation SignIn($email : String!,$password : String!){
         email
         name
         jwt
+        cart{
+            id
+        }
     }
 }
 `

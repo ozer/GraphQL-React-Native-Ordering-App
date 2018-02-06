@@ -26,7 +26,9 @@ app.use('/graphql', jwt({
     secret: JWT_SECRET,
     credentialsRequired: false,
 }), graphqlExpress((request, response, graphQLParams) => {
-    console.log(request.headers);
+    //console.log(request.headers);
+    //console.log("Request User : "+JSON.stringify(request.user))
+    console.log("Request arrived !");
     return {
         schema,
         graphiql: true,
@@ -39,6 +41,21 @@ app.use('/graphql', jwt({
     }
 })
 )
+
+/*
+
+
+ { operationName: 'TestCart',
+     variables: { quantity: 5 },
+     query: 'mutation TestCart($quantity: Number!) {\n  testCart(quantity: $quantity)\n}\n' },
+  _body: true,
+
+
+
+*/
+
+
+
 
 /*
 user : request.user ? user.findOne({ where: { id: request.user.id } }) :

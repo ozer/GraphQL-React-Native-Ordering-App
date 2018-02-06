@@ -35,6 +35,8 @@ const authLink = setContext((_, { headers }) => {
 
     })
 });
+
+
 const cache = new InMemoryCache({
     dataIdFromObject: obj => {
         switch (obj.__typename) {
@@ -51,7 +53,7 @@ const cache = new InMemoryCache({
 persistCache({
     cache,
     storage: AsyncStorage,
-    trigger: 'background'
+    trigger: 'background',
 })
 
 

@@ -5,9 +5,11 @@ const graphql = require('graphql')
 import UserType from './user_type';
 import CategoryType from './category_type';
 import ProductType from './product_type';
+import CartType from './cart_type';
 const User = mongoose.model('user');
 const Product = mongoose.model('product');
 const Category = mongoose.model('category');
+const Cart = mongoose.model('cart');
 import { getAuthenticatedUser } from '../../services/authService';
 const { GraphQLObjectType, GraphQLList, GraphQLID, GraphQLNonNull } = graphql;
 
@@ -20,7 +22,7 @@ const RootQuery = new GraphQLObjectType({
             resolve(parentValue, {id}, context) {
                 console.log("hasgdhjabdnasjkdaksj");
                 console.log("id : "+id);
-                //return User.findById(id).then(user=>user);
+                return User.findById(id).then(user=>user);
             }
         },
         users: {
@@ -35,10 +37,6 @@ const RootQuery = new GraphQLObjectType({
             type: new GraphQLList(CategoryType),
             resolve(parentValue,{},context) {
                 console.log("categories being fetched !");
-                console.log("context user");
-                console.log(context.user)
-                console.log("context request user");
-                console.log(context.request.user);
 
                 context.user.then((data)=>{
                     console.log("Data : "+JSON.stringify(data));
@@ -68,8 +66,15 @@ const RootQuery = new GraphQLObjectType({
         product: {
             type: ProductType,
             args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-            resolve(parnetValue, { id }) {
+            resolve(parentValue, { id }) {
                 return Product.findById(id);
+            }
+        },
+        cart : {
+            type : CartType,
+            args: { id: { type: new GraphQLNonNull(GraphQLID) } },
+            resolve(parentValue, { id }) {
+                return Cart.findById(id);
             }
         }
     })

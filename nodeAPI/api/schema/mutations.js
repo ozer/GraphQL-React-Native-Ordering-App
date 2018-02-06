@@ -9,7 +9,9 @@ const mongoose = require('mongoose');
 const User = mongoose.model('user');
 const Category = mongoose.model('category');
 const Product = mongoose.model('product');
+const Cart = mongoose.model('cart');
 const UserType = require('./types/user_type');
+const CartType = require('./types/cart_type');
 const CategoryType = require('./types/category_type');
 const ProductType = require('./types/product_type');
 const authService = require('../services/authService');
@@ -42,7 +44,7 @@ const mutation = new GraphQLObjectType({
                             user.jwt = token;
                             context.user = user;
                             console.log("token : " + token);
-                            console.log("user : "+user);
+                            console.log("user : " + user);
                             return user;
                         })
                     }
@@ -59,14 +61,16 @@ const mutation = new GraphQLObjectType({
             },
             resolve(_, { email, password }, context) {
                 console.log("email : " + email);
-                console.log(context.user);
+                //console.log(context.user);
                 return User.findOne({ email: email }).then((user) => {
                     if (user) {
                         // validate password
-                        console.log("User : " + JSON.stringify(user));
+                        //console.log("User : " + JSON.stringify(user));
                         console.log("password : " + password);
 
                         if (password == user.password) {
+
+                            console.log("Successfull login!");
 
                             // Lets generate a token for the authenticated user !
                             const token = jwt.sign({
@@ -76,10 +80,12 @@ const mutation = new GraphQLObjectType({
 
                             user.jwt = token;
                             context.request.user = user;
-                            console.log("user : "+user);
+                            //console.log("user : " + user);
                             return user;
 
                         } else {
+
+                            console.log("Bad login");
 
                             Promise.reject('Passwords incorrect !');
 
@@ -89,18 +95,6 @@ const mutation = new GraphQLObjectType({
                     console.log("User not found !");
                     return Promise.reject('email not found');
                 });
-            }
-        },
-        isTokenAuth : {
-            type : UserType,
-            resolve(_,{},context){
-                context.user.then((data)=>{
-                    console.log("Data : "+JSON.stringify(data));
-                    return data;
-                }).catch((err)=>{
-                    console.log("Error occured due to the : "+err);
-                    return Promise.reject('Unauthorized')
-                })
             }
         },
         newCategory: {
@@ -152,6 +146,105 @@ const mutation = new GraphQLObjectType({
                     return Promise.reject('Product already exists !');
 
                 })
+
+            }
+        },
+        fillCart: {
+            type: UserType,
+            args: {
+                quantity: { type: GraphQLString },
+                productId: { type: GraphQLString },
+            },
+            resolve(_, { quantity, productId }, context) {
+
+                console.log("Here we will add some item to the cart!");
+
+                console.log("Quantity : " + quantity);
+                console.log("ProductId : " + productId);
+
+                return context.user.then((data) => {
+                    console.log("Data : " + JSON.stringify(data));
+
+                    if (data) {
+                        return User.findCart(data.id)
+                            .then((cart) => {
+
+                                if (cart) {
+
+                                    console.log("Yeay, there we found an active cart belongs the User !");
+
+                                } else {
+
+                                    console.log("The user does not have active cart !");
+
+                                    User.createCart(data.id).then((newCart)=>{
+
+                                        console.log("New cart : "+newCart.cart);
+
+                                        Cart.addItem(newCart.cart,productId,quantity)
+                                            .then((updatedCart)=>{
+                                                console.log("Updated cart : "+updatedCart);
+
+                                                Cart.findStockFromCarts(productId)
+                                                    .then((cartStock)=>{
+                                                        console.log("Cart stock : "+JSON.stringify(cartStock))
+                                                    }).catch((cartStockErr)=>{
+                                                        console.log("Cart stock err : "+cartStockErr);
+                                                    })
+
+                                            }).catch((updatedCartErr)=>{
+                                                console.log("Updated cart error : "+updatedCartErr);
+                                            })
+
+                                    }).catch((newCartErr)=>{
+                                        console.log("New cart error : "+newCartErr);
+                                    })
+
+                                }
+
+                            }).catch((cartErr) => {
+
+                                console.log("Error occured while finding the cart due to the following : " + cartErr);
+
+                                return Promise.reject("Err occured, check the logs !");
+
+                            })
+
+                    } else {
+
+                        console.log("Authentication problem occured");
+
+                        return Promise.reject("Error occured, check the logs !");
+
+                    }
+
+
+
+                }).catch((err) => {
+
+                    console.log("Err occured due to the : " + err);
+
+                    return Promise.reject("Error occured, check the logs !")
+
+                })
+
+
+
+            }
+        },
+        testCart: {
+            type: ProductType,
+            args: {
+                quantity: { type: GraphQLString },
+                productId: { type: GraphQLID },
+            },
+            resolve(_, { quantity, productId }, context) {
+
+                console.log("Quantity : " + quantity);
+                console.log("ProductId : " + productId);
+                console.log("testCart Mutation !");
+
+                return true;
 
             }
         }

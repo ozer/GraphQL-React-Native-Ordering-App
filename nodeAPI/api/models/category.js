@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 moment.locale('tr');
 
-console.log(moment('1517352116260','x').format('LLL'))
 const CategorySchema = new Schema({
     name: { type : String },
     created_at: { type: Date, default: moment() },
@@ -27,6 +26,7 @@ CategorySchema.statics.addProduct = function(name,price,quantity,id){
 }
 
 CategorySchema.statics.findProducts = function (id) {
+    console.log("Mongodb is looking for products !");
     return this.findById(id)
         .populate('products')
         .then(category => category.products);

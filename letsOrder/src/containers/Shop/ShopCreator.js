@@ -12,13 +12,17 @@ import TabMenuItems from '../Menus/TabMenuItems';
 const { width, height } = Dimensions.get('window');
 
 
-export const ShopCreator = ({ categories }) => {
+export const ShopCreator = ({ categories, props }) => {
 
     // This script will create a TabNavigator for categories and StackNavigators for each member of the categories !
 
     let categoryStack = {};
 
     let routes = {};
+
+    console.log("Shop creator !");
+
+    console.log(props.testCart);
 
 
     categories.forEach((category) => {
@@ -27,11 +31,7 @@ export const ShopCreator = ({ categories }) => {
 
             const { catname } = category.name;
 
-            console.log("OHAA : "+category.name);
-
             if (category.name != undefined) {
-
-                console.log("OHAAAA");
 
                 routes[category.name] = {
                     screen: StackNavigator({
@@ -42,16 +42,12 @@ export const ShopCreator = ({ categories }) => {
                         headerMode : 'none',
                         initialRouteParams : {
                             categoryName : category.name,
-                            products : category.products
+                            products : category.products,
                         }
                     })
                 }
             }
-
-            console.log("Routes : " + routes);
-
-
-
+            
         } else {
 
             console.log("This category has no products !");

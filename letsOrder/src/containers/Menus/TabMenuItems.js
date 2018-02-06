@@ -49,9 +49,7 @@ const TabMenuItems = ({props}) => {
                         </TouchableWithoutFeedback>
                     )
                 })
-            ) : <Text>
-                Boş Menü
-                </Text>
+            ) : null
         }
     </ScrollView>
     </View>
