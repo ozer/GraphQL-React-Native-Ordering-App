@@ -10,7 +10,7 @@ You can also see demonstration of building nested schemas and usage of these wit
 
 You can understand how JWT authentication works in GraphQL way.
 
-You can understand the usage of apollo-Client with its cache and store methods. Apollo-Client v2.0 or above, offers a cache store we can use instead Redux. Firstly, I strongly suggest you should check the docs of apollo-graphql for react. Then, you could check how i handle mutations, store them in the cache and reading those datas from the cache.
+You can understand the usage of apollo-Client with its cache methods. Apollo-Client v2.0 or above, offers a cache store we can use instead Redux. Firstly, I strongly suggest you should check the docs of apollo-graphql for react. Then, you could check how i handle mutations, store them in the cache and reading those datas from the cache.
 
 You can start finding out by clicking the nodeAPI or letsOrder which is an app built with React Native.
 
