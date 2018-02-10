@@ -11,13 +11,17 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { graphql, compose, withApollo } from 'react-apollo';
 import fetchShop from '../../queries/fetchShop';
+import fetchCart from '../../queries/fetchCart';
 import gql from 'graphql-tag';
 import { StackNavigator, TabNavigator } from 'react-navigation';
 import { ShopCreator } from './ShopCreator';
 import ProductPage from '../Product/ProductPage';
 import Drawer from 'react-native-drawer';
+import Cart from '../Cart/Cart'
 import TabMenuItems from '../Menus/TabMenuItems';
 import testCartMutation from '../../mutations/testCartMutation';
+import moment from 'moment';
+moment.locale('tr');
 const { width, height } = Dimensions.get('window');
 
 class Shop extends React.Component {
@@ -50,8 +54,8 @@ class Shop extends React.Component {
         this.refs.drawer.close();
 
     }
-    
-    addItemToCart(){
+
+    addItemToCart() {
 
         console.log("Add item ");
         console.log(this.props.client.cache);
@@ -101,19 +105,57 @@ class Shop extends React.Component {
 
     render() {
 
+        const { client } = this.props;
+
+        const { user } = client.readQuery({
+            query: gql`
+        {
+            user{
+                id
+                email
+                name
+                __typename
+                cart{
+                    id
+                    created_at
+                    cartitems{
+                        id
+                        product{
+                            id
+                            name
+                            price
+                        }
+                    }
+                }
+            }
+        }
+        `
+        })
+
+        console.log("Shop gets rendered again ! "+JSON.stringify(user));
+
         return (
             <Drawer
                 ref={'drawer'}
                 styles={{
-                    shadowColor: "blue",
-                    shadowOpacity: 0.8,
-                    shadowRadius: 0
+                    drawer: {
+                        shadowColor: "black",
+                        shadowOpacity: 0.8,
+                        shadowRadius: 20,
+                        shadowOffset : {
+                            width : -10,
+                            height : 10
+                        },
+                    },
                 }}
-                content={<View
-                    style={{ backgroundColor: 'white', height: height, }}
+                content={<ScrollView
+                    style={{ backgroundColor: 'white', flex: 1 }}
+
                 >
-                    <Text> hello drawer </Text>
-                </View>}
+                    <View>
+                        { user.cart != null ?  <Cart />  : <Text> Sepetiniz boş gözüküyor ! </Text> }
+                    </View>
+                </ScrollView>}
                 onClose={this.closeDrawer.bind(this)}
                 onOpen={this.openDrawer.bind(this)}
                 tapToClose={true}
@@ -129,7 +171,7 @@ class Shop extends React.Component {
                     <Icon
                         name="shopping-cart"
                         color="purple"
-                        size={width/7}
+                        size={width / 7}
                     />
                 </TouchableOpacity>
             </Drawer>
@@ -140,4 +182,4 @@ class Shop extends React.Component {
 
 
 
-export default compose(withApollo,graphql(fetchShop))(Shop);
+export default compose(withApollo, graphql(fetchShop))(Shop);

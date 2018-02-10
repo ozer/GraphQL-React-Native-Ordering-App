@@ -16,6 +16,7 @@ import graphql from 'react-apollo/graphql';
 import addItemToCart from '../../mutations/addItemToCart';
 import fillCartMutation from '../../mutations/fillCart';
 import testCartMutation from '../../mutations/testCartMutation';
+import fetchCart from '../../queries/fetchCart'
 const { width, height } = Dimensions.get('window');
 const fadeAnim = new Animated.Value(0);
 
@@ -116,6 +117,15 @@ class ProductPage extends React.Component {
                     __typename
                     cart{
                         id
+                        created_at
+                        cartitems{
+                            id
+                            product{
+                                id
+                                name
+                                price
+                            }
+                        }
                     }
                 }
             }
@@ -125,12 +135,43 @@ class ProductPage extends React.Component {
             console.log("User : "+JSON.stringify(user))
 
             const { id } = product;
+
+            let userId = user.id;
+
             let quantity = 1
 
 
-            addItem({ id,quantity })
+            addItem({ id,quantity,userId })
                 .then((info) => {
                     console.log("Information : " + JSON.stringify(info))
+
+                    const user2 = client.readQuery({
+                        query: gql`
+                    {
+                        user{
+                            id
+                            email
+                            name
+                            __typename
+                            cart{
+                                id
+                                created_at
+                                cartitems{
+                                    id
+                                    product{
+                                        id
+                                        name
+                                        price
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    `
+                    })
+
+                    console.log("USer 2 : "+JSON.stringify(user2));
+
                 }).catch((err) => {
                     console.log("Error occured while adding item to the cart : " + err);
                     const errors = err.graphQLErrors.map(error =>
@@ -147,8 +188,6 @@ class ProductPage extends React.Component {
     }
 
     render() {
-
-        console.log("This props : " + JSON.stringify(this.props.navigation));
 
         const { products } = this.props.navigation.state.params;
 
@@ -187,9 +226,13 @@ const addItem = graphql(testCartMutation, {
             mutate({
                 variables : {
                     quantity : item.quantity,
-                    productId : item.id
-                }
-            })
+                    productId : item.id,
+                    id : item.userId
+                },
+                refetchQueries : [
+                    { query : fetchCart },
+                ],
+            }),
     })
 })
 

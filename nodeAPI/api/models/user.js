@@ -2,42 +2,45 @@ const bcrypt = require('bcrypt-nodejs');
 const crypto = require('crypto');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const moment = require('moment');
+moment.locale('tr');
 
 const UserSchema = new Schema({
     name: String,
     email: String,
     password: String,
     created_at: { type: Date, default: new Date() },
-    cart: {
+    cart : {
         type: Schema.Types.ObjectId,
         ref: 'cart'
     },
 }, { collection: 'User', });
 
 
-UserSchema.statics.findCart = function(id){
+UserSchema.statics.findCart = function (id) {
 
-    console.log("Finding the cart : "+id);
+    console.log("Finding the cart UserId : " + id);
 
-    return this.findById(id)
+    return this.findById(id,{ $and : [ { updated_at : { $gte : moment().subtract(5,'hours') }}]  })
         .populate('cart')
-        .then(user=>user.cart);
+        .then(user => {   console.log(user.cart); return user.cart});
+
 
 }
 
-UserSchema.statics.createCart = function(id){
+UserSchema.statics.createCart = function (id) {
 
-    console.log("Creating cart : "+id);
+    console.log("Creating cart : " + id);
 
     const Cart = mongoose.model('cart');
 
     return this.findById(id)
-        .then(user=>{
-            const cart = new Cart({updated_at : new Date() });
+        .then(user => {
+            const cart = new Cart();
             user.cart = cart.id;
             return Promise.all([
-                cart.save(),user.save()
-            ]).then(([cart,user])=>user);
+                cart.save(), user.save()
+            ]).then(([cart, user]) => user);
         })
 
 }

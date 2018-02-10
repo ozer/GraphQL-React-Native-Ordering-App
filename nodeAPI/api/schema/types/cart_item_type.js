@@ -1,6 +1,7 @@
 import TimestampType from '../helpers/TimestampType';
 const mongoose = require('mongoose');
 const CartItem = mongoose.model('cartitem');
+const Product = mongoose.model('product');
 const graphql = require('graphql');
 const { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLDate, GraphQLInt } = graphql;
 
@@ -17,7 +18,11 @@ const CartItemType = new GraphQLObjectType({
             type: TimestampType
         },
         product : {
-            type : GraphQLID
+            type : require('./product_type'),
+            resolve(parentValue){
+                console.log("Finding product cart item type : "+parentValue);
+                return Product.findById(parentValue.product).then(product=>product)
+            }
         },
         cart: {
             type: require('./cart_type'),

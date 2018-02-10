@@ -62,7 +62,7 @@ const mutation = new GraphQLObjectType({
             resolve(_, { email, password }, context) {
                 console.log("email : " + email);
                 //console.log(context.user);
-                return User.findOne({ email: email }).then((user) => {
+                return User.findOne({ email: email }).populate('cart').populate('cartitems').then((user) => {
                     if (user) {
                         // validate password
                         //console.log("User : " + JSON.stringify(user));
@@ -80,7 +80,7 @@ const mutation = new GraphQLObjectType({
 
                             user.jwt = token;
                             context.request.user = user;
-                            //console.log("user : " + user);
+                            console.log("user : " + user);
                             return user;
 
                         } else {
@@ -169,35 +169,67 @@ const mutation = new GraphQLObjectType({
                         return User.findCart(data.id)
                             .then((cart) => {
 
+                                console.log("Users cart : " + cart);
+
                                 if (cart) {
 
                                     console.log("Yeay, there we found an active cart belongs the User !");
+
+                                    console.log("Cart id inside the error : "+cart.id);
+
+                                    return Cart.addItem(cart.id,productId,quantity)
+                                        .then((updatedCart)=>{
+                                            console.log("Updated cart : "+updatedCart);
+
+                                            return Product.updateInventory(productId,cart.id,quantity)
+                                                .then((updatedInventory)=>{
+
+                                                    console.log("Updated inventory : "+JSON.stringify(updatedInventory))
+
+                                                    return Promise.resolve("Item has been added to the cart successfully !");
+
+                                                }).catch((updatedInventoryErr)=>{
+                                                    console.log("Update inventory failed due to the error : "+updatedInventoryErr);
+                                                })
+                                        
+                                        }).catch((updatedCartErr)=>{
+                                            console.log("Updated Cart Err : "+updatedCartErr);
+                                        })
 
                                 } else {
 
                                     console.log("The user does not have active cart !");
 
-                                    User.createCart(data.id).then((newCart)=>{
+                                    return User.createCart(data.id).then((newCart) => {
 
-                                        console.log("New cart : "+newCart.cart);
+                                        console.log("New cart : " + newCart.cart);
 
-                                        Cart.addItem(newCart.cart,productId,quantity)
-                                            .then((updatedCart)=>{
-                                                console.log("Updated cart : "+updatedCart);
+                                        return Cart.addItem(newCart.cart, productId, quantity)
+                                            .then((updatedCart) => {
 
-                                                Cart.findStockFromCarts(productId)
-                                                    .then((cartStock)=>{
-                                                        console.log("Cart stock : "+JSON.stringify(cartStock))
-                                                    }).catch((cartStockErr)=>{
-                                                        console.log("Cart stock err : "+cartStockErr);
+                                                console.log("Updated cart : " + updatedCart);
+
+                                                return Product.updateInventory(productId,newCart.cart,quantity)
+                                                    .then((updateInventory)=>{
+
+                                                        console.log("Update Inventory ! "+JSON.stringify(updateInventory));
+
+                                                        return Promise.resolve("Item has been added to the cart successfully !");
+
+                                                    }).catch((updateInventoryErr)=>{
+
+                                                        console.log("Update inventory failed due to the error : "+updateInventoryErr);
+
                                                     })
 
-                                            }).catch((updatedCartErr)=>{
-                                                console.log("Updated cart error : "+updatedCartErr);
+                                            }).catch((updatedCartErr) => {
+
+                                                console.log("Updated cart error : " + updatedCartErr);
+
                                             })
 
-                                    }).catch((newCartErr)=>{
-                                        console.log("New cart error : "+newCartErr);
+                                    }).catch((newCartErr) => {
+                                        console.log("New cart error : " + newCartErr);
                                     })
 
                                 }

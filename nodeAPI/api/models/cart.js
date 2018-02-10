@@ -1,28 +1,30 @@
 import TimestampType from '../schema/helpers/TimestampType';
-const moment = require('moment');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const moment = require('moment');
 moment.locale('tr');
 
+const CartItemSchema = new Schema({
+    cart : {
+        type : Schema.Types.ObjectId,
+        ref : 'cart'
+    },
+    product : {
+        type : Schema.Types.ObjectId,
+        ref : 'product'
+    },
+    created_at : { type : Date, default : moment() },
+    quantity : Number
+});
+
 const CartSchema = new Schema({
-    created_at: { type: Date, default: moment() },
-    updated_at: { type: Date, default: moment(), expires: 15 },
-    cartitems: [{
-        type: Schema.Types.ObjectId,
-        ref : 'cartitem'
-    }],
+    cartitems: [CartItemSchema],
+    status : { type : String, default : 'active' },
     user: {
         type: Schema.Types.ObjectId,
         ref: 'user'
     },
-});
-
-/*
-CartSchema.pre('save', (next) => {
-    this.updated_at = moment();
-    done();
-})
-*/
+},{ timestamps : { createdAt : 'created_at', updatedAt : 'updated_at' }});
 
 CartSchema.statics.addItem = function (cartId, productId, quantity) {
     console.log("CartSchema addItem : cartId : " + cartId);
@@ -31,7 +33,7 @@ CartSchema.statics.addItem = function (cartId, productId, quantity) {
     const CartItem = mongoose.model('cartitem');
     return this.findById(cartId)
         .then(cart => {
-            const cartitem = new CartItem({ quantity });
+            const cartitem = cart.cartitems.create({ quantity });
             cartitem.product = productId;
             console.log("CartSchema addItem : cartItem : " + cartitem);
             console.log("CartSchema addItem : cartItem.id " + cartitem.id)
@@ -43,16 +45,15 @@ CartSchema.statics.addItem = function (cartId, productId, quantity) {
         })
 };
 
-CartSchema.statics.findStockFromCarts = function(productId){
+CartSchema.statics.findStockFromCarts = function (productId) {
 
     return this.aggregate([
-        {$unwind : '$cartitems'},
+        { "$unwind": "$cartitems" },
+        { "$match": { "cartitems.product": mongoose.Types.ObjectId(productId) } },
         {
-            $group : {
-                _id : null,
-                total : {
-                    $sum : "$cartitems.quantity"
-                }
+            "$group": {
+                "_id": "$_id",
+                "total": { "$sum": "$cartitems.quantity" }
             }
         }
     ])
@@ -64,7 +65,6 @@ CartSchema.statics.findItems = function (id) {
     console.log("Cart Schema : findItems : " + id);
 
     return this.findById(id)
-        .populate('cartitems')
         .then(cart => cart.cartitems);
 }
 
@@ -85,5 +85,5 @@ CategorySchema.statics.addProduct = function(name,price,quantity,id){
 
 
 */
-
+mongoose.model('cartitem',CartItemSchema);
 mongoose.model('cart', CartSchema);

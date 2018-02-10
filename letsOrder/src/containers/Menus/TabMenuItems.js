@@ -27,11 +27,11 @@ const TabMenuItems = ({props}) => {
     const { index } = props.navigation.state;
     return(
         <View>
-        <ScrollView contentContainerStyle={{ flex : 1 }} horizontal showsHorizontalScrollIndicator={false} style={{backgroundColor : '#FFAEB9'}}>
+        <ScrollView contentContainerStyle={{ flex : 1 }} horizontal showsHorizontalScrollIndicator={false} style={{backgroundColor : '#88CCF1'}}>
         {
             props.navigation.state.routes.length ? (
                 props.navigation.state.routes.map((route,number)=>{
-                    const focused = ( index === number ) ? '#1874CD' : '#FF6A6A';
+                    const focused = ( index === number ) ? '#1874CD' : '#2D848A';
                     const tintColor = focused ? activeTintColor : inactiveTintColor;
                     return (
                         <TouchableWithoutFeedback

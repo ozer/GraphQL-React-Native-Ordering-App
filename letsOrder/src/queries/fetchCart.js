@@ -1,12 +1,12 @@
 import gql from 'graphql-tag';
 
 export default gql`
-mutation SignIn($email : String!,$password : String!){
-    signIn(email : $email, password : $password){
+{                 
+    user{
         id
         email
-        name
         jwt
+        __typename
         cart{
             id
             created_at
@@ -21,5 +21,4 @@ mutation SignIn($email : String!,$password : String!){
         }
     }
 }
-
 `

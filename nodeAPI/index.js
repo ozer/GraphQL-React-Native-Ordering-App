@@ -42,27 +42,6 @@ app.use('/graphql', jwt({
 })
 )
 
-/*
-
-
- { operationName: 'TestCart',
-     variables: { quantity: 5 },
-     query: 'mutation TestCart($quantity: Number!) {\n  testCart(quantity: $quantity)\n}\n' },
-  _body: true,
-
-
-
-*/
-
-
-
-
-/*
-user : request.user ? user.findOne({ where: { id: request.user.id } }) :
-        Promise.resolve(null),
-
-*/
-
 Promise.resolve()
     .then(() => console.log("server initiation"))
     .catch((err) => console.log("Server initiation has error" + err))

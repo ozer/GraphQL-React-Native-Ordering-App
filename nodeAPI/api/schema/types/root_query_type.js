@@ -11,37 +11,49 @@ const Product = mongoose.model('product');
 const Category = mongoose.model('category');
 const Cart = mongoose.model('cart');
 import { getAuthenticatedUser } from '../../services/authService';
-const { GraphQLObjectType, GraphQLList, GraphQLID, GraphQLNonNull } = graphql;
+const { GraphQLObjectType, GraphQLList, GraphQLID, GraphQLNonNull, GraphQLString } = graphql;
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: () => ({
         user: {
             type: UserType,
-            args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-            resolve(parentValue, {id}, context) {
-                console.log("hasgdhjabdnasjkdaksj");
-                console.log("id : "+id);
-                return User.findById(id).then(user=>user);
+            resolve(parentValue, { }, context) {
+
+                console.log("Fetching user !");
+
+                return context.user.then((data) => {
+
+                    if (data) {
+
+
+                        return User.findById(data.id).populate('cart').then(user => user);
+
+                    }
+
+                })
+
+
+
             }
         },
         users: {
             type: new GraphQLList(UserType),
             resolve(parentValue, args, context) {
-                
+
                 //console.log("User : " + JSON.stringify(getAuthenticatedUser(context)))
                 return User.find({});
             }
         },
         categories: {
             type: new GraphQLList(CategoryType),
-            resolve(parentValue,{},context) {
+            resolve(parentValue, { }, context) {
                 console.log("categories being fetched !");
 
-                context.user.then((data)=>{
-                    console.log("Data : "+JSON.stringify(data));
-                }).catch((err)=>{
-                    console.log("Err occured due to the : "+err)
+                context.user.then((data) => {
+                    console.log("Data : " + JSON.stringify(data));
+                }).catch((err) => {
+                    console.log("Err occured due to the : " + err)
                 })
                 return Category.find({});
                 /*
@@ -53,7 +65,7 @@ const RootQuery = new GraphQLObjectType({
                     return Promise.reject('You are not authorized !');
                 }
                 */
-                
+
             }
         },
         category: {
@@ -70,11 +82,25 @@ const RootQuery = new GraphQLObjectType({
                 return Product.findById(id);
             }
         },
-        cart : {
-            type : CartType,
-            args: { id: { type: new GraphQLNonNull(GraphQLID) } },
-            resolve(parentValue, { id }) {
-                return Cart.findById(id);
+        cart: {
+            type: CartType,
+            resolve(_, { }, context) {
+
+                console.log("Cart is being fetched from the root query : ");
+
+                return context.user.then((data) => {
+
+                    if (data) {
+
+                        console.log("There we found the user !");
+
+                        return User.findCart(data.id);
+
+                    }
+
+                })
+
+
             }
         }
     })

@@ -241,6 +241,18 @@ const login = graphql(LoginMutation, {
                                 email
                                 jwt
                                 __typename
+                                cart{
+                                    id
+                                    created_at
+                                    cartitems{
+                                        id
+                                        product{
+                                            id
+                                            name
+                                            price
+                                        }
+                                    }
+                                }
                             }
                         }
                     `;
