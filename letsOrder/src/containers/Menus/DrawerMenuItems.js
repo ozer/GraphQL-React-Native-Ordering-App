@@ -12,7 +12,7 @@ const DrawerMenuItems = ({ props }) => {
                             <TouchableOpacity
                                 key={route.key}
                                 onPress={() => {
-                                    props.navigation.navigate('DrawerClose')
+                                    props.navigation.navigate('DrawerCl')
 
                                     NavigationActions.reset(
                                         {

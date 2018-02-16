@@ -12,6 +12,8 @@ mutation SignIn($email : String!,$password : String!){
             created_at
             cartitems{
                 id
+                created_at
+                quantity
                 product{
                     id
                     name

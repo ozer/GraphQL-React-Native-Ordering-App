@@ -246,6 +246,8 @@ const login = graphql(LoginMutation, {
                                     created_at
                                     cartitems{
                                         id
+                                        quantity
+                                        created_at
                                         product{
                                             id
                                             name

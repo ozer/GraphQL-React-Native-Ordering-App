@@ -65,6 +65,9 @@ class Shop extends React.Component {
 
     renderShopTab() {
         const { client } = this.props;
+
+        console.log("Shop render function running...");
+
         try {
             const { categories } = client.readQuery({
                 query: gql`
@@ -120,6 +123,7 @@ class Shop extends React.Component {
                     created_at
                     cartitems{
                         id
+                        quantity
                         product{
                             id
                             name
@@ -134,48 +138,16 @@ class Shop extends React.Component {
 
         console.log("Shop gets rendered again ! "+JSON.stringify(user));
 
-        return (
-            <Drawer
-                ref={'drawer'}
-                styles={{
-                    drawer: {
-                        shadowColor: "black",
-                        shadowOpacity: 0.8,
-                        shadowRadius: 20,
-                        shadowOffset : {
-                            width : -10,
-                            height : 10
-                        },
-                    },
-                }}
-                content={<ScrollView
-                    style={{ backgroundColor: 'white', flex: 1 }}
+        console.log(this.props.screenProps)
 
-                >
-                    <View>
-                        { user.cart != null ?  <Cart />  : <Text> Sepetiniz boş gözüküyor ! </Text> }
-                    </View>
-                </ScrollView>}
-                onClose={this.closeDrawer.bind(this)}
-                onOpen={this.openDrawer.bind(this)}
-                tapToClose={true}
-                openDrawerOffset={width / 4}
-                type="displace"
-                side={'right'}
-            >
+        return (
+            <View style={{flex : 1}} >
 
                 {this.renderShopTab()}
 
-                <TouchableOpacity onPress={this.state.drawerOpen ? this.closeDrawer.bind(this) : this.openDrawer.bind(this)}
-                    style={{ alignSelf: 'flex-end', position: 'absolute', bottom: 50, }}>
-                    <Icon
-                        name="shopping-cart"
-                        color="purple"
-                        size={width / 7}
-                    />
-                </TouchableOpacity>
-            </Drawer>
+            </View>
         )
+
     }
 
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import {
+    ScrollView,
     View,
     Text,
     Animated,
@@ -9,6 +10,7 @@ import {
     TextInput,
     TouchableOpacity
 } from 'react-native';
+import { NavigationActions } from 'react-navigation';
 import { withApollo, compose } from 'react-apollo';
 import { ProductContainer } from '../../components/products/ProductContainer';
 import gql from 'graphql-tag';
@@ -16,7 +18,10 @@ import graphql from 'react-apollo/graphql';
 import addItemToCart from '../../mutations/addItemToCart';
 import fillCartMutation from '../../mutations/fillCart';
 import testCartMutation from '../../mutations/testCartMutation';
-import fetchCart from '../../queries/fetchCart'
+import fetchCart from '../../queries/fetchCart';
+import Drawer from 'react-native-drawer';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Cart from '../Cart/Cart'
 const { width, height } = Dimensions.get('window');
 const fadeAnim = new Animated.Value(0);
 
@@ -53,7 +58,8 @@ class ProductPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            dataSource: null
+            dataSource: null,
+            drawerOpen: false
         }
         this.renderSeperator = this.renderSeperator.bind(this);
     }
@@ -67,6 +73,28 @@ class ProductPage extends React.Component {
             }
         ).start();
     }
+
+    openDrawer() {
+
+        this.setState({
+            drawerOpen: true
+        })
+
+        this.refs.drawer.open();
+
+    }
+
+    closeDrawer() {
+
+        this.setState({
+            drawerOpen: false
+        })
+
+        this.refs.drawer.close();
+
+    }
+
+    
 
     renderSeperator(rowId) {
 
@@ -120,6 +148,7 @@ class ProductPage extends React.Component {
                         created_at
                         cartitems{
                             id
+                            quantity
                             product{
                                 id
                                 name
@@ -132,7 +161,7 @@ class ProductPage extends React.Component {
             `
             })
 
-            console.log("User : "+JSON.stringify(user))
+            console.log("User : " + JSON.stringify(user))
 
             const { id } = product;
 
@@ -141,7 +170,7 @@ class ProductPage extends React.Component {
             let quantity = 1
 
 
-            addItem({ id,quantity,userId })
+            addItem({ id, quantity, userId })
                 .then((info) => {
                     console.log("Information : " + JSON.stringify(info))
 
@@ -158,6 +187,7 @@ class ProductPage extends React.Component {
                                 created_at
                                 cartitems{
                                     id
+                                    quantity
                                     product{
                                         id
                                         name
@@ -170,7 +200,7 @@ class ProductPage extends React.Component {
                     `
                     })
 
-                    console.log("USer 2 : "+JSON.stringify(user2));
+                    console.log("USer 2 : " + JSON.stringify(user2));
 
                 }).catch((err) => {
                     console.log("Error occured while adding item to the cart : " + err);
@@ -187,6 +217,10 @@ class ProductPage extends React.Component {
 
     }
 
+    componentDidUpdate() {
+        console.log("did update");
+    }
+
     render() {
 
         const { products } = this.props.navigation.state.params;
@@ -195,26 +229,75 @@ class ProductPage extends React.Component {
             rowHasChanged: (r1, r2) => r1.id !== r2.id
         });
 
-        return (
-            <Animated.ScrollView
-                style={{ opacity: fadeAnim, flex: 1, backgroundColor: 'white' }}
-            >
+        const { client } = this.props;
 
-                <View
-                    style={styles.list}
-                >
-                    {
-                        products.map((key, index) => {
-                            return (
-                                <View style={{ width: width / 3 }}
-                                    key={index}>
-                                    <ProductContainer product={key} addItemToCart={this.addItemToCart.bind(this)} />
-                                </View>
-                            )
-                        })
+        const { user } = client.readQuery({
+            query: gql`
+        {
+            user{
+                id
+                email
+                name
+                __typename
+                cart{
+                    id
+                    created_at
+                    cartitems{
+                        id
+                        quantity
+                        product{
+                            id
+                            name
+                            price
+                        }
                     }
-                </View>
-            </Animated.ScrollView>
+                }
+            }
+        }
+        `
+        })
+
+        console.log(this.props.navigation.state.params.screenProps);
+        return (
+
+
+            <View  style={{flex : 1}} >
+
+
+                <Animated.ScrollView
+                    style={{ opacity: fadeAnim, flex: 1, backgroundColor: 'white' }}
+                >
+
+                    <View
+                        style={styles.list}
+                    >
+                        {
+                            products.map((key, index) => {
+                                return (
+                                    <View style={{ width: width / 3 }}
+                                        key={index}>
+                                        <ProductContainer product={key} addItemToCart={this.addItemToCart.bind(this)} />
+                                    </View>
+                                )
+                            })
+                        }
+                    </View>
+                </Animated.ScrollView>
+
+                <TouchableOpacity onPress={()=> this.props.navigation.state.params.screenProps.rootNavigation.navigate('DrawerTogg')}
+                    //onPress={this.state.drawerOpen ? this.closeDrawer.bind(this) : this.openDrawer.bind(this)}
+                    style={{ alignSelf: 'flex-end', position: 'absolute', bottom: 50, }}>
+                    <Icon
+                        name="shopping-cart"
+                        color="purple"
+                        size={width / 7}
+                    />
+                </TouchableOpacity>
+
+            </View>
+
+
+
         )
     }
 
@@ -224,13 +307,13 @@ const addItem = graphql(testCartMutation, {
     props: ({ mutate }) => ({
         addItem: (item) =>
             mutate({
-                variables : {
-                    quantity : item.quantity,
-                    productId : item.id,
-                    id : item.userId
+                variables: {
+                    quantity: item.quantity,
+                    productId: item.id,
+                    id: item.userId
                 },
-                refetchQueries : [
-                    { query : fetchCart },
+                refetchQueries: [
+                    { query: fetchCart },
                 ],
             }),
     })
@@ -238,7 +321,7 @@ const addItem = graphql(testCartMutation, {
 
 
 
-export default compose(withApollo,addItem)(ProductPage)
+export default compose(withApollo, addItem)(ProductPage)
 
 /*
                 <ListView
@@ -247,4 +330,46 @@ export default compose(withApollo,addItem)(ProductPage)
                     dataSource={dataSource.cloneWithRows(products)}
                     renderRow={(rowData) => <ProductContainer product={rowData} />}
         />
+
+        <Drawer
+                ref={'drawer'}
+                onClose={this.closeDrawer.bind(this)}
+                onOpen={this.openDrawer.bind(this)}
+                tapToClose={true}
+                openDrawerOffset={width / 4}
+                type="displace"
+                side={'right'}
+                content={<ScrollView
+                    style={{ backgroundColor: 'white', flex: 1 }}
+
+                >
+                    <View>
+                        {user.cart != null ? <Cart cart={user.cart} /> : <Text> Sepetiniz boş gözüküyor ! </Text>}
+                    </View>
+                </ScrollView>}
+                styles={{
+                    drawer: {
+                        shadowColor: "black",
+                        shadowOpacity: 0.8,
+                        shadowRadius: 20,
+                        shadowOffset: {
+                            width: -10,
+                            height: 10
+                        },
+                    },
+                }}>
+
+                 <TouchableOpacity onPress={this.state.drawerOpen ? this.closeDrawer.bind(this) : this.openDrawer.bind(this)}
+                    style={{ alignSelf: 'flex-end', position: 'absolute', bottom: 50, }}>
+                    <Icon
+                        name="shopping-cart"
+                        color="purple"
+                        size={width / 7}
+                    />
+                </TouchableOpacity>
+
+        </Drawer>
+
+
+
 */

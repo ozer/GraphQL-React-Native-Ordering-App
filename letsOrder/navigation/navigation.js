@@ -9,10 +9,12 @@ import App from '../App';
 import SignIn from '../src/containers/Auth/SignIn';
 import SignUp from '../src/containers/Auth/SignUp';
 import CustomDrawerMenu from '../src/containers/Menus/CustomDrawerMenu';
+import CartMenu from '../src/containers/Menus/CartMenu'
 import Shop from '../src/containers/Shop/Shop';
 import { Button } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ShopCreator from '../src/containers/Shop/ShopCreator';
+
 const SignInStackNavigator = StackNavigator({
     SignInStackNav: {
         screen: SignIn
@@ -47,12 +49,50 @@ const SignUpStackNavigator = StackNavigator({
         })
     });
 
-const ShopTabNavigator = StackNavigator({
+
+const ShopTop = StackNavigator({
+    Shop : {
+        screen : (props) => <Shop {...props} />
+    }
+},{
+    headerMode : 'none'
+})
+
+
+
+const ShopWithCart = DrawerNavigator({
     Shop: {
-        screen: Shop
+        screen: ({navigation}) => <ShopTop screenProps={{ rootNavigation : navigation}} />
     }
 }, {
-        headerMode: 'none'
+        drawerPosition: 'right',
+        contentComponent: props => <CartMenu {...props} />,
+        drawerOpenRoute: 'DrawerOp',
+        drawerCloseRoute: 'DrawerCl',
+        drawerToggleRoute: 'DrawerTogg',
+        
+    })
+
+const ShopTabNavigator = StackNavigator({
+    Shop: {
+        screen: ShopWithCart
+    }
+}, {
+        headerMode: 'none',
+        navigationOptions: ({ navigation }) => ({
+            headerRight: <Icon
+                name="menu"
+                onPress={() => {
+                    navigation.navigate({
+                        key: null,
+                        index: 0,
+                        action: [
+                            navigation.navigate('DrawerTogg')
+                        ]
+                    })
+                }}
+            />
+        })
     })
 
 
@@ -118,7 +158,7 @@ const PrimaryNavigator = StackNavigator({
     }
 },
     {
-        headerMode: 'none'
+        headerMode: 'none',
     });
 
 

@@ -31,7 +31,7 @@ const TabMenuItems = ({props}) => {
         {
             props.navigation.state.routes.length ? (
                 props.navigation.state.routes.map((route,number)=>{
-                    const focused = ( index === number ) ? '#1874CD' : '#2D848A';
+                    const focused = ( index === number ) ? '#1874CD' : '#4E9BE6';
                     const tintColor = focused ? activeTintColor : inactiveTintColor;
                     return (
                         <TouchableWithoutFeedback
@@ -42,7 +42,7 @@ const TabMenuItems = ({props}) => {
                             delayPressIn={0}
                             >
                             <View style={{marginLeft : 20, marginTop : height / 40, shadowOpacity : 25, alignSelf : 'flex-start' }}>
-                                <Text style={{borderRadius : 5, fontWeight : 'bold', borderWidth :2, paddingTop : 5,color : 'white', height : height/18, width : width/5,textAlign : 'center', backgroundColor : focused, borderStyle: 'dashed',borderColor : '#CD2626'}}>
+                                <Text style={{borderRadius : 5, fontWeight : 'bold', borderWidth :2, paddingTop : 5,color : 'white', height : height/18, width : width/5,textAlign : 'center', backgroundColor : focused, borderStyle: 'dashed'}}>
                                 {props.getLabel({route, number})}
                                 </Text>
                             </View>

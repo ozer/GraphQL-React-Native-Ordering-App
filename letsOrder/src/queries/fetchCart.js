@@ -12,6 +12,7 @@ export default gql`
             created_at
             cartitems{
                 id
+                quantity
                 product{
                     id
                     name

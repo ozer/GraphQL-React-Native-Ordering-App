@@ -25,7 +25,6 @@ UserSchema.statics.findCart = function (id) {
         .populate('cart')
         .then(user => {   console.log(user.cart); return user.cart});
 
-
 }
 
 UserSchema.statics.createCart = function (id) {

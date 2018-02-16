@@ -22,6 +22,8 @@ export const ShopCreator = ({ categories, props }) => {
 
     console.log("Shop creator !");
 
+    console.log(props);
+
     console.log(props.testCart);
 
 
@@ -43,6 +45,7 @@ export const ShopCreator = ({ categories, props }) => {
                         initialRouteParams : {
                             categoryName : category.name,
                             products : category.products,
+                            screenProps : props.screenProps
                         }
                     })
                 }
