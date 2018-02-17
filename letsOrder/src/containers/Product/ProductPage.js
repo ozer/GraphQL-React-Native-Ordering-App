@@ -284,16 +284,6 @@ class ProductPage extends React.Component {
                     </View>
                 </Animated.ScrollView>
 
-                <TouchableOpacity onPress={()=> this.props.navigation.state.params.screenProps.rootNavigation.navigate('DrawerTogg')}
-                    //onPress={this.state.drawerOpen ? this.closeDrawer.bind(this) : this.openDrawer.bind(this)}
-                    style={{ alignSelf: 'flex-end', position: 'absolute', bottom: 50, }}>
-                    <Icon
-                        name="shopping-cart"
-                        color="purple"
-                        size={width / 7}
-                    />
-                </TouchableOpacity>
-
             </View>
 
 

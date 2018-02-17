@@ -5,6 +5,7 @@ import {
     DrawerNavigator,
     addNavigationHelpers
 } from 'react-navigation';
+import { Dimensions } from 'react-native';
 import App from '../App';
 import SignIn from '../src/containers/Auth/SignIn';
 import SignUp from '../src/containers/Auth/SignUp';
@@ -14,6 +15,9 @@ import Shop from '../src/containers/Shop/Shop';
 import { Button } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ShopCreator from '../src/containers/Shop/ShopCreator';
+import Test from '../src/containers/TestDrawer/Test';
+
+const { width, height } = Dimensions.get('window');
 
 const SignInStackNavigator = StackNavigator({
     SignInStackNav: {
@@ -49,39 +53,16 @@ const SignUpStackNavigator = StackNavigator({
         })
     });
 
-
-const ShopTop = StackNavigator({
-    Shop : {
-        screen : (props) => <Shop {...props} />
-    }
-},{
-    headerMode : 'none'
-})
-
-
-
-const ShopWithCart = DrawerNavigator({
-    Shop: {
-        screen: ({navigation}) => <ShopTop screenProps={{ rootNavigation : navigation}} />
-    }
-}, {
-        drawerPosition: 'right',
-        contentComponent: props => <CartMenu {...props} />,
-        drawerOpenRoute: 'DrawerOp',
-        drawerCloseRoute: 'DrawerCl',
-        drawerToggleRoute: 'DrawerTogg',
-        
-    })
-
 const ShopTabNavigator = StackNavigator({
     Shop: {
-        screen: ShopWithCart
+        screen: Shop
     }
 }, {
         headerMode: 'none',
         navigationOptions: ({ navigation }) => ({
             headerRight: <Icon
-                name="menu"
+                name="shopping-cart"
+                size={height/18}
                 onPress={() => {
                     navigation.navigate({
                         key: null,
@@ -101,12 +82,11 @@ const DrawerBar = DrawerNavigator({
         screen: ShopTabNavigator
     },
     Shop2: {
-        screen: ShopTabNavigator
+        screen: Test
     }
 
 }, {
         drawerPosition: 'left',
-        headerMode: 'none',
         initialRouteName: 'Shop',
         navigationOptions: ({ navigation }) => ({
             headerStyle: { backgroundColor: 'white' },
@@ -130,9 +110,11 @@ const MenuDrawerStack = StackNavigator({
         index: 0,
         navigationOptions: ({ navigation }) => ({
             headerStyle: { backgroundColor: '#1874CD' },
+            headerTitle : 'My New Shop',
             gesturesEnabled: false,
             headerLeft: <Icon
                 name="menu"
+                size={height/18}
                 onPress={() => {
                     navigation.navigate({
                         key: null,

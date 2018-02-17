@@ -10,6 +10,7 @@ export default gql`
             name
             price
             quantity
+            created_at
         }
     }
 }`

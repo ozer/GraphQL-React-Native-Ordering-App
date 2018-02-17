@@ -21,6 +21,7 @@ import Cart from '../Cart/Cart'
 import TabMenuItems from '../Menus/TabMenuItems';
 import testCartMutation from '../../mutations/testCartMutation';
 import moment from 'moment';
+import PropTypes from 'prop-types';
 moment.locale('tr');
 const { width, height } = Dimensions.get('window');
 
@@ -35,23 +36,17 @@ class Shop extends React.Component {
 
     }
 
+
     openDrawer() {
 
-        this.setState({
-            drawerOpen: true
-        })
-
-        this.refs.drawer.open();
+        this._drawer.open();
 
     }
 
     closeDrawer() {
 
-        this.setState({
-            drawerOpen: false
-        })
 
-        this.refs.drawer.close();
+        this._drawer.close();
 
     }
 
@@ -80,6 +75,7 @@ class Shop extends React.Component {
                             name
                             price
                             quantity
+                            created_at
                         }
                     }
                 }`
@@ -136,16 +132,49 @@ class Shop extends React.Component {
         `
         })
 
-        console.log("Shop gets rendered again ! "+JSON.stringify(user));
-
-        console.log(this.props.screenProps)
+        console.log("Shop gets rendered again ! " + JSON.stringify(user));
 
         return (
-            <View style={{flex : 1}} >
+            <Drawer
+                ref={ref => this._drawer = ref}
+                onClose={ this.closeDrawer.bind(this) }
+                onOpen={this.openDrawer.bind(this)}
+                tapToClose={true}
+                openDrawerOffset={width / 4}
+                type="displace"
+                side={'right'}
+                content={<ScrollView
+                    style={{ backgroundColor: 'white', flex: 1 }}
+
+                >
+                    <View>
+                        {user.cart != null ? <Cart cart={user.cart} /> : <Text> Sepetiniz boş gözüküyor ! </Text>}
+                    </View>
+                </ScrollView>}
+                styles={{
+                    drawer: {
+                        shadowColor: "black",
+                        shadowOpacity: 0.8,
+                        shadowRadius: 20,
+                        shadowOffset: {
+                            width: -10,
+                            height: 10
+                        },
+                    },
+                }}>
 
                 {this.renderShopTab()}
 
-            </View>
+                <TouchableOpacity onPress={this.state.drawerOpen ? this.closeDrawer.bind(this) : this.openDrawer.bind(this)}
+                    style={{ alignSelf: 'flex-end', position: 'absolute', bottom: 50, }}>
+                    <Icon
+                        name="shopping-cart"
+                        color="purple"
+                        size={width / 7}
+                    />
+                </TouchableOpacity>
+
+            </Drawer>
         )
 
     }
@@ -155,3 +184,50 @@ class Shop extends React.Component {
 
 
 export default compose(withApollo, graphql(fetchShop))(Shop);
+/*
+
+<View style={{flex : 1}} >
+
+                {this.renderShopTab()}
+
+            </View>
+
+<Drawer
+                ref={'drawer'}
+                onClose={this.closeDrawer.bind(this)}
+                onOpen={this.openDrawer.bind(this)}
+                tapToClose={true}
+                openDrawerOffset={width / 4}
+                type="displace"
+                side={'right'}
+                content={<ScrollView
+                    style={{ backgroundColor: 'white', flex: 1 }}
+
+                >
+                    <View>
+                        {user.cart != null ? <Cart cart={user.cart} /> : <Text> Sepetiniz boş gözüküyor ! </Text>}
+                    </View>
+                </ScrollView>}
+                styles={{
+                    drawer: {
+                        shadowColor: "black",
+                        shadowOpacity: 0.8,
+                        shadowRadius: 20,
+                        shadowOffset: {
+                            width: -10,
+                            height: 10
+                        },
+                    },
+                }}>
+
+                 <TouchableOpacity onPress={this.state.drawerOpen ? this.closeDrawer.bind(this) : this.openDrawer.bind(this)}
+                    style={{ alignSelf: 'flex-end', position: 'absolute', bottom: 50, }}>
+                    <Icon
+                        name="shopping-cart"
+                        color="purple"
+                        size={width / 7}
+                    />
+                </TouchableOpacity>
+
+        </Drawer>
+*/

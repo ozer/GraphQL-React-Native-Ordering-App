@@ -11,6 +11,8 @@ const httpLink = createHttpLink({
     uri: 'http://localhost:4000/graphql',
 });
 
+
+
 const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
     
@@ -49,6 +51,7 @@ const cache = new InMemoryCache({
     },
     addTypename: true,
 })
+
 
 persistCache({
     cache,

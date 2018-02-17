@@ -27,7 +27,7 @@ const TabMenuItems = ({props}) => {
     const { index } = props.navigation.state;
     return(
         <View>
-        <ScrollView contentContainerStyle={{ flex : 1 }} horizontal showsHorizontalScrollIndicator={false} style={{backgroundColor : '#88CCF1'}}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{backgroundColor : '#88CCF1', flexDirection : 'row'}}>
         {
             props.navigation.state.routes.length ? (
                 props.navigation.state.routes.map((route,number)=>{
@@ -42,7 +42,7 @@ const TabMenuItems = ({props}) => {
                             delayPressIn={0}
                             >
                             <View style={{marginLeft : 20, marginTop : height / 40, shadowOpacity : 25, alignSelf : 'flex-start' }}>
-                                <Text style={{borderRadius : 5, fontWeight : 'bold', borderWidth :2, paddingTop : 5,color : 'white', height : height/18, width : width/5,textAlign : 'center', backgroundColor : focused, borderStyle: 'dashed'}}>
+                                <Text adjustsFontSizeToFit style={{borderRadius : 5, fontWeight : 'bold', borderWidth :2, paddingTop : 5,color : 'white', height : height/18, width : width/5,textAlign : 'center', backgroundColor : focused, borderStyle: 'dashed'}}>
                                 {props.getLabel({route, number})}
                                 </Text>
                             </View>

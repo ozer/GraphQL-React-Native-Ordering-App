@@ -6,7 +6,7 @@ import {
     Dimensions,
     View
 } from 'react-native';
-import { TabNavigator, StackNavigator } from 'react-navigation';
+import { TabNavigator, StackNavigator, TabBarTop } from 'react-navigation';
 import ProductPage from '../Product/ProductPage';
 import TabMenuItems from '../Menus/TabMenuItems';
 const { width, height } = Dimensions.get('window');
@@ -57,15 +57,40 @@ export const ShopCreator = ({ categories, props }) => {
 
         }
 
-    })
+    });
 
     console.log("OHA : " + JSON.stringify(routes));
 
     const ShopCatTabNav = TabNavigator(routes, {
         tabBarPosition: 'top',
-        tabBarComponent: props => <TabMenuItems props={props} />
+        swipeEnabled : true,
+        lazy : true,
+        tabBarOptions : {
+            scrollEnabled : true,
+            showLabel : true,
+            showIcon : true,
+            tabStyle : {
+                backgroundColor : 'pink',
+                width : width / 4,
+                height : height / 12,
+                alignContent : 'center',
+                justifyContent : 'center',
+                alignItems : 'center'
+            },
+            labelStyle : {
+                textAlign : 'center',
+                fontSize : 12,
+                fontWeight : 'bold',
+            },
+            indicatorStyle : {
+                backgroundColor : 'teal'
+            },
+            allowFontScaling : true,
+            upperCaseLabel : true
+        },
+        tabBarComponent : TabBarTop
     })
 
-    return <ShopCatTabNav />
+    return (<ShopCatTabNav />)
 
 }

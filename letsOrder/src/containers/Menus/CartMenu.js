@@ -10,14 +10,38 @@ const capitalizeFirstLetter = function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+const returnTotalCost = (cartitems) => {
+
+    Array.prototype.sum = function () {
+
+        var T = 0;
+
+        for (var i = 0, _len = this.length; i < _len; i++) {
+
+            console.log("Price : "+this[i].product.price);
+            console.log("Quantiy : "+JSON.stringify(this[i]))
+
+            T = parseInt(T) + parseInt(this[i].product.price*this[i].quantity)
+
+        }
+
+        return T;
+
+    }
+
+    return cartitems.sum();
+
+}
+
 class CartMenu extends React.Component {
+
     constructor(props) {
         super(props);
     }
+    
     render() {
 
         console.log("cart menu");
-        console.log(this.props.navigation);
 
         return (
             <ScrollView style={{ backgroundColor: 'white' }}>

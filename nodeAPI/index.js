@@ -10,7 +10,7 @@ import schema from './api/schema/schema';
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect(MONGO_URI);
+mongoose.connect('mongodb://localhost:27017/db');
 
 const User = mongoose.model('user');
 
@@ -26,9 +26,6 @@ app.use('/graphql', jwt({
     secret: JWT_SECRET,
     credentialsRequired: false,
 }), graphqlExpress((request, response, graphQLParams) => {
-    //console.log(request.headers);
-    //console.log("Request User : "+JSON.stringify(request.user))
-    console.log("Request arrived !");
     return {
         schema,
         graphiql: true,
@@ -41,6 +38,7 @@ app.use('/graphql', jwt({
     }
 })
 )
+
 
 Promise.resolve()
     .then(() => console.log("server initiation"))

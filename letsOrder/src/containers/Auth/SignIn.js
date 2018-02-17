@@ -200,7 +200,7 @@ class SignIn extends React.Component {
                 <Button
                     onPress={this[view]}
                     style={styles.submit}
-                    title={view === 'signup' ? 'Sign up' : 'Login'}
+                    title={view === 'signup' ? 'Sign up' : 'Sign In'}
                     disabled={this.state.loading
                         //|| !!this.props.auth.jwt 
                         || (this.state.email == '' && this.state.password == '')}
@@ -214,7 +214,7 @@ class SignIn extends React.Component {
                         onPress={this.switchView}
                     >
                         <Text style={styles.switchAction}>
-                            {view === 'login' ? 'Sign up' : 'Login'}
+                            {view === 'login' ? 'Sign up' : 'Sign In'}
                         </Text>
                     </TouchableOpacity>
                 </View>
