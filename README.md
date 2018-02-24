@@ -25,3 +25,7 @@ For iOs : first run the following command : npm run start, open XCode by running
 For Android : inside the letsOrder, after you run your Android simulator successfully, run the following command : react-native run-android
 
 ![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%206%20-%202018-02-24%20at%2001.16.29.png)
+
+![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%206%20-%202018-02-24%20at%2001.16.53.png)
+
+![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%206%20-%202018-02-24%20at%2001.16.48.png)
