@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
 } from 'react-native';
 import moment from 'moment';
 moment.locale('tr');
@@ -12,12 +12,19 @@ const { width, height } = Dimensions.get("window");
 const W = 4 * width / 7;
 const H = height / 16;
 
-const cartItem = ({ }) => {
+const styles = StyleSheet.create({
+    container : {
+        flexDirection : 'row',
+        justifyContent : 'flex-start'
+    }
+})
+
+const CartItem = ({ item }) => {
 
     return(
-        <View>
+        <View style={styles.container}>
             <Text>
-                Cart item
+               Product :  {item.product.name}
             </Text>
         </View>
     )
@@ -25,4 +32,4 @@ const cartItem = ({ }) => {
 }
 
 
-export default cartItem;
+export default CartItem;

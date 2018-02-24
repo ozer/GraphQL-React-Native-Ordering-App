@@ -8,7 +8,8 @@ import {
     Dimensions,
     StyleSheet,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    ActivityIndicator
 } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import { withApollo, compose } from 'react-apollo';
@@ -50,7 +51,17 @@ const styles = StyleSheet.create({
         fontSize: 15,
         backgroundColor: '#FFFFFF',
         borderRadius: 2,
-    }
+    },
+    loadingContainer: {
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        position: 'absolute',
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
 })
 
 class ProductPage extends React.Component {
@@ -59,7 +70,8 @@ class ProductPage extends React.Component {
         super(props);
         this.state = {
             dataSource: null,
-            drawerOpen: false
+            drawerOpen: false,
+            loading: false
         }
         this.renderSeperator = this.renderSeperator.bind(this);
     }
@@ -94,7 +106,7 @@ class ProductPage extends React.Component {
 
     }
 
-    
+
 
     renderSeperator(rowId) {
 
@@ -124,15 +136,15 @@ class ProductPage extends React.Component {
 
         const { client, addItem } = this.props;
 
-        /*
-        this.props.navigation.state.params.testCart()
-            .then((test) => {
-                console.log("Test cart mutation : " + test);
-            }).catch((testErr) => {
-                console.log("Error for test carm utation : " + testErr);
-            })
-        */
+        console.log("addItemToCart inside the Product Page : "+product);
 
+        this.props.navigation.state.params.addItemToCart(product);
+
+        /*
+
+        this.setState({
+            loading: true
+        })
 
         try {
             const { user } = client.readQuery({
@@ -174,6 +186,10 @@ class ProductPage extends React.Component {
                 .then((info) => {
                     console.log("Information : " + JSON.stringify(info))
 
+                    this.setState({
+                        loading: false
+                    })
+
                     const user2 = client.readQuery({
                         query: gql`
                     {
@@ -203,15 +219,30 @@ class ProductPage extends React.Component {
                     console.log("USer 2 : " + JSON.stringify(user2));
 
                 }).catch((err) => {
+
                     console.log("Error occured while adding item to the cart : " + err);
+
                     const errors = err.graphQLErrors.map(error =>
                         error.message
                     )
+
+                    this.setState({
+                        loading: false
+                    })
+
                 })
 
         } catch (error) {
+
             console.log("Error occured at reading user from the cache due to the following err : " + error);
+
+            this.setState({
+                loading: false
+            })
+
         }
+
+        */
 
 
 
@@ -222,6 +253,8 @@ class ProductPage extends React.Component {
     }
 
     render() {
+
+        // TAB NAVIGATOR WILL BE MODIFIED !
 
         const { products } = this.props.navigation.state.params;
 
@@ -256,17 +289,17 @@ class ProductPage extends React.Component {
         }
         `
         })
-
-        console.log(this.props.navigation.state.params.screenProps);
         return (
-
-
-            <View  style={{flex : 1}} >
-
+            <View style={{ flex: 1 }}>
 
                 <Animated.ScrollView
                     style={{ opacity: fadeAnim, flex: 1, backgroundColor: 'white' }}
                 >
+
+                    {this.state.loading ?
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator />
+                        </View> : undefined}
 
                     <View
                         style={styles.list}
@@ -283,10 +316,7 @@ class ProductPage extends React.Component {
                         }
                     </View>
                 </Animated.ScrollView>
-
             </View>
-
-
 
         )
     }

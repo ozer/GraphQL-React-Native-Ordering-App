@@ -10,7 +10,7 @@ import schema from './api/schema/schema';
 
 mongoose.Promise = global.Promise;
 
-mongoose.connect('mongodb://localhost:27017/db');
+mongoose.connect(MONGO_URI);
 
 const User = mongoose.model('user');
 

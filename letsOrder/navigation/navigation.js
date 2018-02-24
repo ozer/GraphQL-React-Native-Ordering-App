@@ -59,21 +59,6 @@ const ShopTabNavigator = StackNavigator({
     }
 }, {
         headerMode: 'none',
-        navigationOptions: ({ navigation }) => ({
-            headerRight: <Icon
-                name="shopping-cart"
-                size={height/18}
-                onPress={() => {
-                    navigation.navigate({
-                        key: null,
-                        index: 0,
-                        action: [
-                            navigation.navigate('DrawerTogg')
-                        ]
-                    })
-                }}
-            />
-        })
     })
 
 
@@ -81,10 +66,6 @@ const DrawerBar = DrawerNavigator({
     Shop: {
         screen: ShopTabNavigator
     },
-    Shop2: {
-        screen: Test
-    }
-
 }, {
         drawerPosition: 'left',
         initialRouteName: 'Shop',

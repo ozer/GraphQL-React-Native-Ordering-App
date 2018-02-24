@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import moment from 'moment';
 import CartHeader from '../../components/cartcomponents/CartHeader';
+import CartItem from '../../components/cartcomponents/CartItem';
 moment.locale('tr');
 
 const returnTotalCost = (cartitems) => {
@@ -12,10 +13,10 @@ const returnTotalCost = (cartitems) => {
 
         for (var i = 0, _len = this.length; i < _len; i++) {
 
-            console.log("Price : "+this[i].product.price);
-            console.log("Quantiy : "+JSON.stringify(this[i]))
+            console.log("Price : " + this[i].product.price);
+            console.log("Quantiy : " + JSON.stringify(this[i]))
 
-            T = parseInt(T) + parseInt(this[i].product.price*this[i].quantity)
+            T = parseInt(T) + parseInt(this[i].product.price * this[i].quantity)
 
         }
 
@@ -30,38 +31,29 @@ const returnTotalCost = (cartitems) => {
 const Cart = ({ cart }) => {
 
     return (
-        <View
-            style={styles.cartContainer}
-        >
-
-        <View>
-
-        </View>
-            <Text adjustsFontSizeToFit style={styles.cartHeader}> Cart Creation Date : {moment(cart.created_at).format('LLL')} </Text>
-            <Text adjustsFontSizeToFit style={styles.cartHeader}> {returnTotalCost(cart.cartitems)} </Text>
-
+        <View style={styles.cartContainer}>
 
             {
                 cart.cartitems.length > 0 ?
                     <View>
                         <CartHeader headerInput={cart.created_at} />
-                        
+
                         {
-                            cart.cartitems.map((key, index) => {
+                            cart.cartitems.map((key) => {
+
+                                console.log("keeey  :"+JSON.stringify(key));
 
                                 return (
-                                    <View key={index}>
-                                        <Text>
-                                            {key.product.name}, {key.product.price}
-                                        </Text>
-                                    </View>
+                                    <CartItem key={key.id} item={key} />
                                 )
 
                             })
                         }
                     </View>
                     :
-                    <Text adjustsFontSizeToFit> Cart is empty ! </Text>
+                    <View style={{ justifyContent : 'center'}}>
+                    <Text adjustsFontSizeToFit style={{textAlign : 'center'}}> Cart is empty ! </Text>
+                    </View>
             }
 
         </View>

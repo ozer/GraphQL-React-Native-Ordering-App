@@ -151,9 +151,7 @@ class SignIn extends React.Component {
     signup() {
 
     }
-
-
-
+    
     switchView() {
         this.setState({
             view: this.state.view === 'signup' ? 'login' : 'signup',

@@ -12,7 +12,7 @@ import TabMenuItems from '../Menus/TabMenuItems';
 const { width, height } = Dimensions.get('window');
 
 
-export const ShopCreator = ({ categories, props }) => {
+export const ShopCreator = ({ categories, props, addItemToCart }) => {
 
     // This script will create a TabNavigator for categories and StackNavigators for each member of the categories !
 
@@ -21,11 +21,6 @@ export const ShopCreator = ({ categories, props }) => {
     let routes = {};
 
     console.log("Shop creator !");
-
-    console.log(props);
-
-    console.log(props.testCart);
-
 
     categories.forEach((category) => {
 
@@ -45,7 +40,8 @@ export const ShopCreator = ({ categories, props }) => {
                         initialRouteParams : {
                             categoryName : category.name,
                             products : category.products,
-                            screenProps : props.screenProps
+                            screenProps : props.screenProps,
+                            addItemToCart : addItemToCart
                         }
                     })
                 }
@@ -59,7 +55,7 @@ export const ShopCreator = ({ categories, props }) => {
 
     });
 
-    console.log("OHA : " + JSON.stringify(routes));
+    console.log("kupa : "+Object.keys(routes).length);
 
     const ShopCatTabNav = TabNavigator(routes, {
         tabBarPosition: 'top',
@@ -71,7 +67,7 @@ export const ShopCreator = ({ categories, props }) => {
             showIcon : true,
             tabStyle : {
                 backgroundColor : 'pink',
-                width : width / 4,
+                width : Object.keys(routes).length > 4 ? width / 4 : width / Object.keys(routes).length ,
                 height : height / 12,
                 alignContent : 'center',
                 justifyContent : 'center',
