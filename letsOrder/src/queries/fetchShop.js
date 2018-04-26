@@ -13,4 +13,4 @@ export default gql`
             created_at
         }
     }
-}`
+}`;

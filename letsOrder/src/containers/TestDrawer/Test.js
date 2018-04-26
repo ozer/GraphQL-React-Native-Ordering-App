@@ -1,94 +1,70 @@
 import React from 'react';
 import Drawer from 'react-native-drawer';
 import {
-    View,
-    Text,
-    TouchableOpacity
+  View,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
 
-const SomeText = ({})=>{
+const SomeText = ({}) => {
+  console.log('Some test gets rendered !');
 
-    console.log("Some test gets rendered !");
-
-    return ( <Text> selam </Text>)
-
-}
+  return (<Text> selam </Text>);
+};
 
 class TestDrawer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      drawerOpen: false,
+    };
+  }
+  openDrawer() {
+    this.setState({
+      drawerOpen: true,
+    });
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            drawerOpen: false
-        }
-    }
-    openDrawer() {
+    this.refs.drawer.open();
+  }
 
-        this.setState({
-            drawerOpen: true
-        })
+  closeDrawer() {
+    this.setState({
+      drawerOpen: false,
+    });
 
-        this.refs.drawer.open();
+    this.refs.drawer.close();
+  }
 
-    }
+  componentWillUpdate() {
+    console.log('Re rendering...');
+  }
 
-    closeDrawer() {
+  returnSomeText() {
+    console.log('Some text is running');
 
-        this.setState({
-            drawerOpen: false
-        })
-
-        this.refs.drawer.close();
-
-    }
-
-    componentWillUpdate() {
-
-        console.log("Re rendering...")
-
-    }
-
-    returnSomeText() {
-
-        console.log("Some text is running");
-
-        return (
-            <Text>
+    return (
+      <Text>
                 Selam
-            </Text>
-        )
+      </Text>
+    );
+  }
 
-    }
+  render() {
+    return (
 
-    render() {
-
-        return (
-            <Drawer ref={'drawer'} type="displace"
-                content={<View style={{flex : 1}} ></View>}
-                openDrawerOffset={100}
-                onClose={this.closeDrawer.bind(this)}
-                onOpen={this.openDrawer.bind(this)} side={'right'}>
-
-                <View style={{flex : 1}}>
-                    <TouchableOpacity onPress={this.state.drawerOpen ? this.closeDrawer.bind(this) : this.openDrawer.bind(this)}>
-                        <Text>
+      <View style={{ flex: 1 }}>
+        <TouchableOpacity onPress={this.state.drawerOpen ? this.closeDrawer.bind(this) : this.openDrawer.bind(this)}>
+          <Text>
                             Open Drawer
-                    </Text>
-                    </TouchableOpacity>
-                    
-
-                    <SomeText />
-
-                </View>
+          </Text>
+        </TouchableOpacity>
 
 
+        <SomeText />
 
-
-            </Drawer>
-        )
-
-    }
-
+      </View>
+    );
+  }
 }
 
 export default TestDrawer;

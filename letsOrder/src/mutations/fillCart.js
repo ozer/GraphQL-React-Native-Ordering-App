@@ -1,9 +1,10 @@
-import gql from 'graphql-tag';
+import { Mutation, compose } from 'react-apollo';
+import AddItemToCart from './AddItemToCart';
 
-export default gql`
-mutation FillCart($quantity : Number!){
-    fillCart(quantity : $quantity){
-        name
-    }
-}
-`
+const FillCart = ({}) => (
+  <Mutation
+    mutation={AddItemToCart}
+  />
+);
+
+export default compose(FillCart);

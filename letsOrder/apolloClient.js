@@ -9,6 +9,7 @@ import { persistCache } from 'apollo-cache-persist';
 
 const httpLink = createHttpLink({
     uri: 'http://localhost:4000/graphql',
+    onError: (e) => { console.log(e.graphQLErrors) },
 });
 
 
@@ -17,7 +18,6 @@ const authLink = setContext((_, { headers }) => {
     // get the authentication token from local storage if it exists
     
     return AsyncStorage.getItem('JWT').then((token) => {
-        console.log("value : " + token);
 
         if (token) {
 
@@ -43,7 +43,6 @@ const cache = new InMemoryCache({
     dataIdFromObject: obj => {
         switch (obj.__typename) {
             case 'UserType':
-                console.log("Oooov user !");
                 return defaultDataIdFromObject(obj);
             default:
                 return defaultDataIdFromObject(obj);

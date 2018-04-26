@@ -24,4 +24,4 @@ mutation SignIn($email : String!,$password : String!){
     }
 }
 
-`
+`;
