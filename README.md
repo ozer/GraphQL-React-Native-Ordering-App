@@ -4,15 +4,15 @@ This task of this project is basically ordering from the store. You can create c
 
 Up to now, i did not build an interface to insert categories or products attached to them so, you will be using graphiql tool working at the localhost:4000/graphql to perform these. 
 
-I am also working for conducting an efficient inventory management with MongoDB, even though MongoDB does not fit this purpose well.
+I am also working for conducting an efficient inventory management with MongoDB, even though MongoDB does not fit this purpose in terms of necessary correlation between tables/collections.
 
 You can also see demonstration of building nested schemas and usage of these with the schema_types in GraphQL.
 
 You can understand how JWT authentication works in GraphQL way.
 
-You can understand the usage of apollo-Client with its cache methods. Apollo-Client v2.0 or above, offers a cache store we can use instead Redux. Firstly, I strongly suggest you should check the docs of apollo-graphql for react. Then, you could check how i handle mutations, store them in the cache and reading those datas from the cache.
+You can understand the usage of apollo-Client with its cache methods. Apollo-Client v2.0 or above, offers a cache store we can use instead Redux. Firstly, I strongly suggest you should check the docs of apollo-graphql for react. Then, you could check how i handle mutations, store them in the cache and reading those datas from the cache. In addition to this, you can achieve how to construct a navigation dynamically for example building a tab navigation bar fed by the categories and products fetched after successful login. The tab bar has some nice features such as swiping and horizontal scrolling. Following this, a cart drawer involves in with the purpose for displaying the user's cart. It does not only display it but also offers some functions which work by pressing two small buttons that increae and decrease the quantity of the items in the cart.
 
-You can start finding out by clicking the nodeAPI or letsOrder which is an app built with React Native.
+You can start finding out by clicking the nodeAPI or aslanOrder which is an app built with React Native.
 
 Clone the app ;
 
@@ -20,12 +20,19 @@ npm install on both directories.
 
 npm run start on both applications.
 
-For iOs : first run the following command : npm run start, open XCode by running letsOrder.xcodeproject inside the /ios folder in letsOrder. Run the simulator.
+For iOs : first run the following command : npm run start, open XCode by running aslanOrder.xcodeproject inside the /ios folder in aslanOrder. Run the simulator.
 
-For Android : inside the letsOrder, after you run your Android simulator successfully, run the following command : react-native run-android
+For Android : inside the aslanOrder, after you run your Android simulator successfully, run the following command : react-native run-android
 
-![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%206%20-%202018-02-24%20at%2001.16.29.png)
+New Screenshots from the app :
 
-![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%206%20-%202018-02-24%20at%2001.16.53.png)
+![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%207%20-%202018-05-10%20at%2000.54.57.png)
 
-![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%206%20-%202018-02-24%20at%2001.16.48.png)
+![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%207%20-%202018-05-10%20at%2000.55.06.png)
+
+![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%207%20-%202018-05-10%20at%2000.55.19.png)
+
+![alt text](https://github.com/ozercevikaslan/GraphQL-React-Native-Ordering-App/blob/master/screenshots/Simulator%20Screen%20Shot%20-%20iPhone%207%20-%202018-05-10%20at%2000.55.26.png)
+
+
+
