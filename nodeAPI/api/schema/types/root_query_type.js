@@ -45,22 +45,10 @@ const RootQuery = new GraphQLObjectType({
         console.log('categories being fetched !');
 
         return context.user.then((data) => {
-          console.log(`Data : ${JSON.stringify(data)}`);
-
           return Category.find({});
         }).catch((err) => {
           console.log(`Err occured due to the : ${err}`);
         });
-
-        /*
-                if( context.request.user ){
-                    console.log("ok !")
-                    return Category.find({});
-                } else {
-                    console.log("not ok !");
-                    return Promise.reject('You are not authorized !');
-                }
-                */
       },
     },
     category: {
@@ -81,11 +69,9 @@ const RootQuery = new GraphQLObjectType({
       type: CartType,
       resolve(_, { }, context) {
         console.log('Cart is being fetched from the root query : ');
-
         return context.user.then((data) => {
           if (data) {
             console.log('There we found the user !');
-
             return User.findCart(data.id);
           }
         });

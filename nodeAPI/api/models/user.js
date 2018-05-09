@@ -42,7 +42,6 @@ UserSchema.statics.createCart = function (id) {
     });
 };
 
-
 /*
 
 CategorySchema.statics.addProduct = function(name,price,quantity,id){

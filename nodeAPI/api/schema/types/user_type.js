@@ -30,8 +30,6 @@ const UserType = new GraphQLObjectType({
     cart: {
       type: CartType,
       resolve(parentValue) {
-        console.log('cart cart');
-        console.log(`User id : ${parentValue}`);
         return User.findCart(parentValue.id);
       },
     },

@@ -30,10 +30,8 @@ const ProductType = new GraphQLObjectType({
     category: {
       type: require('./category_type'),
       resolve(parentValue) {
-        console.log(`Parent value  : ${JSON.stringify(parentValue)}`);
         return Product.findById(parentValue).populate('category')
           .then((product) => {
-            console.log(`product : ${product}`);
             return product.category;
           });
       },

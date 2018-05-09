@@ -25,7 +25,6 @@ const CartType = new GraphQLObjectType({
     cartitems: {
       type: new GraphQLList(CartItemType),
       resolve(parentValue, {}, context) {
-        console.log(`cart type : cartitems : ${parentValue}`);
         return Cart.findById(parentValue.id).then(cart => cart.cartitems);
       },
     },

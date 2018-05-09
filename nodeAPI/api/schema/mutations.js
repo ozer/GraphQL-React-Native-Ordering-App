@@ -249,17 +249,21 @@ const mutation = new GraphQLObjectType({
               if (cart) {
                 console.log('Yeay, there we found an active cart belongs the User !');
 
-                console.log(`Cart id inside the error : ${cart.id}`);
-
-                return Cart.addItem(cart.id, productId, quantity)
-                  .then((updatedCart) => {
-                    console.log(`Updated cart : ${updatedCart}`);
-
-                    return Promise.resolve(data);
-
-                  }).catch((updatedCartErr) => {
-                    console.log(`Updated Cart Err : ${updatedCartErr}`);
-                  });
+                // Check the existed cart has the item or not !
+                return cart.findItemInCart(productId).then((foundItem) => {
+                  console.log(foundItem);
+                  // The cart has the item !
+                  if (foundItem) {
+                    // We have to increase the quantity of the item instead of adding a copy of it!
+                    return cart.addQuantity(productId).then(updatedCart => Promise.resolve()).catch(err => Promise.reject(err));
+                  }
+                  // Since the cart does not have the item, so we can basically add the item!
+                  return Cart.addItem(cart.id, productId, 1)
+                    .then(updatedCart => Promise.resolve(data)).catch((updatedCartErr) => {
+                      console.log(`Updated Cart Err : ${updatedCartErr}`);
+                      return Promise.reject(updatedCartErr);
+                    });
+                });
               }
               // Well, it seems that the user does not have a cart actively.
               console.log('The user does not have active cart !');
@@ -270,15 +274,6 @@ const mutation = new GraphQLObjectType({
                 return Cart.addItem(newCart.cart, productId, quantity)
                   .then((updatedCart) => {
                     console.log(`Updated cart : ${updatedCart}`);
-
-                    return Product.updateInventory(productId, newCart.cart, quantity)
-                      .then((updateInventory) => {
-                        console.log(`Update Inventory ! ${JSON.stringify(updateInventory)}`);
-
-                        return Promise.resolve('Item has been added to the cart successfully !');
-                      }).catch((updateInventoryErr) => {
-                        console.log(`Update inventory failed due to the error : ${updateInventoryErr}`);
-                      });
                   }).catch((updatedCartErr) => {
                     console.log(`Updated cart error : ${updatedCartErr}`);
                   });
@@ -301,6 +296,42 @@ const mutation = new GraphQLObjectType({
           return Promise.reject(authErrMessage);
         }).catch(err => Promise.reject(err));
       },
+    },
+    increaseQuantityByOne: {
+      type: UserType,
+      args: {
+        productId: { type: GraphQLString },
+      },
+      resolve: (_, { productId }, context) => context.user.then((data) => {
+        if (data) {
+          return User.findCart(data.id).then(cart => cart.addQuantity(productId).then(updatedCart => Promise.resolve()).catch(err => Promise.reject(err)));
+        }
+        return Promise.reject('Authentication failed !');
+      }),
+    },
+    decreaseQuantityByOne: {
+      type: UserType,
+      args: {
+        productId: { type: GraphQLString },
+      },
+      resolve: (_, { productId }, context) => context.user.then((data) => {
+        console.log(`Decreasing the quantity of the item : ${productId}`);
+        if (data) {
+          // return User.findCart(data.id).then(cart => cart.decreaseQuantity(productId).then(updatedCart => Promise.resolve()).catch(err => Promise.reject(err)));
+          return User.findCart(data.id).then((cart) => {
+            return cart.getQuantityOfTheItem(productId)
+              .then((quantity) => {
+                if (quantity > 1) {
+                  console.log('Quantity is more than 1 !');
+                  return cart.decreaseQuantity(productId).then(updatedCart => Promise.resolve()).catch(err => Promise.reject(err));
+                }
+                console.log('Quantity is 1 !');
+                return cart.removeItemFromCart(productId).then(updatedCart => Promise.resolve()).catch(err => Promise.reject(err));
+              }).catch(err => err);
+          }).catch(err => Promise.reject(err));
+        }
+        return Promise.reject('Authentication failed !');
+      }).catch(err => Promise.reject(err)),
     },
     testCart: {
       type: ProductType,

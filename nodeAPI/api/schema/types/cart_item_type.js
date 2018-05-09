@@ -25,7 +25,6 @@ const CartItemType = new GraphQLObjectType({
     product: {
       type: require('./product_type'),
       resolve(parentValue) {
-        console.log(`Finding product cart item type : ${parentValue}`);
         return Product.findById(parentValue.product).then(product => product);
       },
     },
@@ -34,7 +33,6 @@ const CartItemType = new GraphQLObjectType({
       resolve(parentValue) {
         return CartItem.findById(parentValue).populate('cart')
           .then((cartItem) => {
-            console.log(`cart item : ${cartItem}`);
             return cartItem.cart;
           });
       },
